@@ -17,7 +17,11 @@ build:
 	$(CXX) $(CXXFLAGS) src/*.cpp \
 	-L/opt/homebrew/lib \
 	-lSDL2 \
+	-lSDL2_image \
+	-lSDL2_ttf \
+	-lSDL2_mixer \
 	-llua5.4 \
+	-I"./libs/" \
 	-I/opt/homebrew/include \
 	-D_THREAD_SAFE \
 	-o gameengine
