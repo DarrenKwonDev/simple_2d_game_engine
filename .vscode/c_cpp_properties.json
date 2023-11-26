@@ -2,7 +2,6 @@
     "configurations": [
         {
             "name": "Mac",
-            // header file path
             "includePath": [
                 "${workspaceFolder}/**",
                 "/opt/homebrew/include/**"
@@ -11,11 +10,18 @@
             "macFrameworkPath": [
                 "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],
-            "compilerPath": "/usr/bin/clang++",
+            "compilerPath": "/usr/bin/clang",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "macos-clang-arm64",
-            "configurationProvider": "ms-vscode.makefile-tools"
+            // "ms-vscode.cmake-tools"와 "ms-vscode.makefile-tools"는 각각 CMake와 Makefile 기반의 프로젝트 설정을 자동으로 처리
+            // 즉, provider에 따라, VScode에서 config의 includePath를 읽는 것이 아니라 CMakeLists.txt나 makefiles에 정의된 include 정보를 사용하게 된다.
+            // "configurationProvider": "ms-vscode.cmake-tools"
+            // "configurationProvider": "ms-vscode.makefile-tools"
+
+            // 직접 지정을 위해 provider를 ms-vscode.cpptools로 지정합시다.
+            // 이 경우, c_cpp_properties.json 파일 내에서 직접 컴파일러 경로, 포함 경로, 정의 등을 지정해야 합니다.
+            "configurationProvider": "ms-vscode.cpptools"
         }
     ],
     "version": 4
