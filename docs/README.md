@@ -9,6 +9,7 @@
         -   [rendererFlags](#rendererflags)
         -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
         -   [Double-Buffered Renderer](#double-buffered-renderer)
+        -   [frame drop compensate](#frame-drop-compensate)
     -   [SLD2](#sld2)
         -   [surface vs texture](#surface-vs-texture)
 
@@ -102,6 +103,20 @@ SDL_CreateRenderer(
 back buffer와 front buffer의 이중 운용.  
 draw를 back buffer에서 먼저하고 front buffer로 swap하는 방식.  
 glitch를 방지하고, 렌더링이 완료되지 않은 프레임은 화면에 보여지지 않는 장점이 있음.
+
+### frame drop compensate
+
+unity, love2d 등 웬만한 게임 엔진은 game loop를 메서드 형식으로 노출하고 있다. 그 중에서도 update는 frame마다 호출된다.
+
+따라서, fps가 하락하면 update 호출 횟수도 줄어듦. frame이 바뀌어도 동일한 정도로 움직이게 만들어야 함.
+
+핵심 : if frame rate drop, should be compensate for it.
+
+-   case 1. 60fps -> 30fps
+    update 호출이 덜 일어나지만 dt가 늘어났으므로 dt를 곱하여 compensate.
+
+-   case 2. 60fps -> 120fps
+    update 호출이 더 자주 일어나지만 dt가 줄어들었으므로 dt를 곱하면 compensate됨.
 
 ## SLD2
 
