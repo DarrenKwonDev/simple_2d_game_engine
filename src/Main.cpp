@@ -9,18 +9,17 @@
 #include "imgui/imgui.h"
 #include "sol/sol.hpp"
 
+#include "Game.h"
+
 using namespace std;
 
-int main() {
-    SDL_Init(SDL_INIT_EVERYTHING);
+int main(int argc, char* argv[]) {
 
-    sol::state lua;
-    lua.open_libraries(sol::lib::base);
+    Game game; // stack 할당
 
-    glm::vec2 velocity = glm::vec2(5.0, -2.5);
-    velocity = glm::normalize(velocity);
+    game.Initialize();
+    game.Run();
+    game.Destroy();
 
-    cout << "Hello, world!" << endl;
-    SDL_Quit();
     return 0;
 }
