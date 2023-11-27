@@ -119,7 +119,6 @@ void Game::RunGameLoop() {
         Game::ProcessInput();
         Game::Update();
         Game::Render();
-
     }
 }
 ```

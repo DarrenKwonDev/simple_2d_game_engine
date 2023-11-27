@@ -103,16 +103,10 @@ void Game::Setup() {
 
 // called every frame
 void Game::Update() {
-    // Capping the Game Framerate
-    // if update too fast, block loop.
-    // SDL_TICKS_PASSED(A,B).
-    // check A pass B?
-    // 즉, 전의 실행시간이 MILLISEC_PER_FRAME 을 더한 것보다 더 지나서 다시 update를 해도 되는가에 대한 로직.
-    while (!SDL_TICKS_PASSED(SDL_GetTicks(), millisecPrevFrame + MILLISEC_PER_FRAME)) {
-        // nothing.
-    };
-
-    millisecPrevFrame = SDL_GetTicks();
+    // https://wiki.libsdl.org/SDL2/SDL_Delay
+    // 지정된 시간 동안 현재 thread에서 벗어나 다른 작업을 하도록
+    // context switching을 의도하고 OS scheduler에게 위임.
+    SDL_Delay(MILLISEC_PER_FRAME);
 
     playerPosition.x += playerVelocity.x;
     playerPosition.y += playerVelocity.y;
