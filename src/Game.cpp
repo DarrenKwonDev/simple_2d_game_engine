@@ -55,6 +55,18 @@ void Game::Initialize() {
     mIsRunning = true;
 }
 
+void Game::Run() {
+    Game::Setup();
+    while (mIsRunning) {
+        Game::ProcessInput();
+        Game::Update();
+        Game::Render();
+    }
+}
+
+void Game::Setup() {
+}
+
 // main game loop three logics : ProcessInput, Update, Render.
 void Game::ProcessInput() {
     SDL_Event sdlEvent;
@@ -83,18 +95,11 @@ void Game::Update() {
 }
 
 void Game::Render() {
-    SDL_SetRenderDrawColor(mRenderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(mRenderer);
+    SDL_SetRenderDrawColor(mRenderer, 21, 21, 21, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(mRenderer); // clears the entire rendering target
 
+    // present. (as double buffered renderer, swap back/front buffer)
     SDL_RenderPresent(mRenderer);
-}
-
-void Game::Run() {
-    while (mIsRunning) {
-        Game::ProcessInput();
-        Game::Update();
-        Game::Render();
-    }
 }
 
 // clean up

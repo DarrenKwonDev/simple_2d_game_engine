@@ -8,12 +8,11 @@
         -   [full screen vs fake full screen(borderless window)](#full-screen-vs-fake-full-screenborderless-window)
         -   [rendererFlags](#rendererflags)
         -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
+        -   [Double-Buffered Renderer](#double-buffered-renderer)
 
 <!-- tocstop -->
 
 # 2d-game-engine-poc
-
-lectured by [pikuma game engine](https://github.com/gustavopezzi/game-engine-cpp-2d/tree/main) lecture
 
 ## configure
 
@@ -95,3 +94,9 @@ SDL_CreateRenderer(
 추가로, GPU가 모니터의 refresh rate보다 더 많은 프레임을 렌더링하지 않도록 제한함으로써, 불필요한 GPU 부하를 줄일 수도 있다.
 
 문제는 모니터의 refresh rate가 60Hz라면, 게임의 fps는 60fps로 제한되며 (60fps 이상으로 렌더링해도 60fps 이상이라고 인식하지 못함. 애초에 주사율이 초당 60번 refresh되니까.) 만약 60fps를 못 맞춘다면 나누어 떨어지는 30fps로 렌더링됨. 결국 GPU가 힘들면 fps가 낮아짐.
+
+### Double-Buffered Renderer
+
+back buffer와 front buffer의 이중 운용.  
+draw를 back buffer에서 먼저하고 front buffer로 swap하는 방식.  
+glitch를 방지하고, 렌더링이 완료되지 않은 프레임은 화면에 보여지지 않는 장점이 있음.
