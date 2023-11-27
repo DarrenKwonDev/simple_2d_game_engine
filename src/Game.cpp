@@ -8,7 +8,7 @@ using namespace std;
 
 Game::Game() {
     cout << "Game constructor called" << endl;
-    this->mIsRunning = false;
+    mIsRunning = false;
 }
 
 Game::~Game() {
@@ -22,7 +22,7 @@ void Game::Initialize() {
     }
 
     // create window
-    this->mWindow = SDL_CreateWindow(
+    mWindow = SDL_CreateWindow(
         NULL,
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         800, 600,
@@ -34,7 +34,7 @@ void Game::Initialize() {
     }
 
     // create renderer
-    this->mRenderer = SDL_CreateRenderer(
+    mRenderer = SDL_CreateRenderer(
         mWindow,
         -1, // default.
         0);
@@ -43,7 +43,7 @@ void Game::Initialize() {
         return;
     }
 
-    this->mIsRunning = true;
+    mIsRunning = true;
 }
 
 // main game loop three logics : ProcessInput, Update, Render.
@@ -55,12 +55,12 @@ void Game::ProcessInput() {
         switch (sdlEvent.type) {
         // user press 'x' window close btn.
         case SDL_QUIT:
-            this->mIsRunning = false;
+            mIsRunning = false;
             break;
 
         case SDL_KEYDOWN:
             if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
-                this->mIsRunning = false;
+                mIsRunning = false;
             };
             break;
 
@@ -74,10 +74,14 @@ void Game::Update() {
 }
 
 void Game::Render() {
+    SDL_SetRenderDrawColor(mRenderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(mRenderer);
+
+    SDL_RenderPresent(mRenderer);
 }
 
 void Game::Run() {
-    while (this->mIsRunning) {
+    while (mIsRunning) {
         Game::ProcessInput();
         Game::Update();
         Game::Render();
