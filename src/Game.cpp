@@ -3,6 +3,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "glm/glm.hpp"
+
 #include "Game.h"
 
 using namespace std;
@@ -65,9 +67,6 @@ void Game::RunGameLoop() {
     }
 }
 
-void Game::Setup() {
-}
-
 // main game loop three logics : ProcessInput, Update, Render.
 void Game::ProcessInput() {
     SDL_Event sdlEvent;
@@ -92,7 +91,19 @@ void Game::ProcessInput() {
     };
 }
 
+glm::vec2 playerPosition;
+glm::vec2 playerVelocity;
+
+// one time setup
+void Game::Setup() {
+    playerPosition = glm::vec2(10.0, 20.0);
+    playerVelocity = glm::vec2(1.0, 0.0);
+}
+
+// called every frame
 void Game::Update() {
+    playerPosition.x += playerVelocity.x;
+    playerPosition.y += playerVelocity.y;
 }
 
 void Game::Render() {
@@ -117,8 +128,10 @@ void Game::Render() {
     SDL_FreeSurface(surface);
 
     SDL_Rect dstRect = {
-        10, 10, // x, y
-        32, 32  // w, h
+        // x, y
+        static_cast<int>(playerPosition.x),
+        static_cast<int>(playerPosition.y),
+        32, 32 // w, h
     };
     SDL_RenderCopy(mRenderer, texture, NULL, &dstRect);
 

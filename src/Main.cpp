@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     Game game; // stack 할당
 
     game.Initialize();
-    game.Run();
+    game.RunGameLoop();
     game.Destroy();
 
     return 0;
