@@ -21,11 +21,16 @@ void Game::Initialize() {
         return;
     }
 
+    SDL_DisplayMode displayMode;
+    SDL_GetCurrentDisplayMode(0, &displayMode);
+    mWindowWidth = displayMode.w;
+    mWindowHeight = displayMode.h;
+
     // create window
     mWindow = SDL_CreateWindow(
         NULL,
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        800, 600,
+        mWindowWidth, mWindowHeight,
         SDL_WINDOW_BORDERLESS);
 
     if (!mWindow) {
@@ -36,12 +41,16 @@ void Game::Initialize() {
     // create renderer
     mRenderer = SDL_CreateRenderer(
         mWindow,
-        -1, // default.
-        0);
+        -1,                                                  // 기본 그래픽 드라이버 사용
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC // GPU 사용 + Vsync
+    );
+
     if (!mRenderer) {
         cerr << "Error creating SDL renderer" << endl;
         return;
     }
+
+    SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
 
     mIsRunning = true;
 }

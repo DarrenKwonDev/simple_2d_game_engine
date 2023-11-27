@@ -42,3 +42,41 @@ clang++ -Wall -std=c++17 Main.cpp -L/opt/homebrew/lib -lSDL2 -I/opt/homebrew/inc
 -   내장 lib로 사용하기
     -   이 프로젝트에선 glm, imgui, sol은 내장 lib로써 사용하고 있어 소스코드를 전부 다 담고 있다. -I 경로만 추가해주면 됨.
     -   이 방식의 장점은, 커스터마이징이 용이하고 플랫폼에 종속되지 않는다는 것. 물론 손이 좀 더 가긴 한다.
+
+## game things
+
+### full screen vs fake full screen(borderless window)
+
+찐 full screen은 다른 화면 전환이 번거로움. (전체 화면)
+Fake Fullscreen은 사실상 크기를 조정한 창 모드. (전체 창모드)
+
+### rendererFlags
+
+SDL_CreateRenderer에서 GPU 사용이 가능
+
+[SDL_RendererFlags](https://wiki.libsdl.org/SDL2/SDL_RendererFlags) 참고.
+
+-   SDL_RENDERER_SOFTWARE : 하드웨어 가속 사용 안하고 CPU 사용
+-   SDL_RENDERER_ACCELERATED : dedicated graphics card (GPU) 사용
+-   SDL_RENDERER_PRESENTVSYNC : VSync 사용. tearing 방지
+-   SDL_RENDERER_TARGETTEXTURE
+
+```cpp
+SDL_CreateRenderer(
+    window,
+    -1,
+    SDL_RENDERER_ACCELERATED
+);
+```
+
+### VSync (vertical sync, 수직 동기화)
+
+아래와 같은 tearing은 게임이 매 프레임마다 렌더링을 하는 사이 모니터의 주사율과 맞지 않아서 그리는 도중을 보여줘서 보이는 현상임.
+
+<img src="./imgs/screen_tearing.webp" />
+
+이를 위해 게임 렌더러의 프레젠테이션(화면에 그리는 것)을 모니터의 리프레시 레이트(주사율)와 동기화하는 기술이 vsync이며 tearing 방지 한다.
+
+추가로, GPU가 모니터의 리프레시 레이트보다 더 많은 프레임을 렌더링하지 않도록 제한함으로써, 불필요한 GPU 부하를 줄일 수도 있다.
+
+문제는 모니터의 refresh rate가 60Hz라면, 60fps로 제한되며 (60fps 이상으로 렌더링해도 60fps로 제한됨) 만약 60fps를 못 맞춘다면 나누어 떨어지는 30fps로 렌더링됨. 결국 GPU가 힘들면 fps가 낮아짐.

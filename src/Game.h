@@ -18,4 +18,7 @@ public:
     void Update();
     void Render();
     void Destroy();
+
+    int mWindowWidth;
+    int mWindowHeight;
 };
