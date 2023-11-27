@@ -9,7 +9,7 @@
         -   [rendererFlags](#rendererflags)
         -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
         -   [Double-Buffered Renderer](#double-buffered-renderer)
-        -   [Fixed Time Step(Frame Rate Independence)](#fixed-time-stepframe-rate-independence)
+        -   [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
         -   [frame drop compensate with delta time](#frame-drop-compensate-with-delta-time)
     -   [SLD2](#sld2)
         -   [surface vs texture](#surface-vs-texture)
@@ -105,7 +105,7 @@ back buffer와 front buffer의 이중 운용.
 draw를 back buffer에서 먼저하고 front buffer로 swap하는 방식.  
 glitch를 방지하고, 렌더링이 완료되지 않은 프레임은 화면에 보여지지 않는 장점이 있음.
 
-### Fixed Time Step(Frame Rate Independence)
+### Fixed Time Step(Frame Rate Independence) game loop
 
 아래 코드는 while loop를 도는데 구동되는 컴퓨터의 CPU 성능에 의존적이다.
 즉, 게임을 구동하는 클라이언트마다 동일한 게임 경험을 줄 수 없다는 것을 의미한다.
@@ -133,7 +133,9 @@ unity, love2d 등 웬만한 게임 엔진은 game loop를 메서드 형식으로
 
 따라서, fps가 하락하면 update 호출 횟수도 줄어듦. frame이 바뀌어도 동일한 정도로 움직이게 만들어야 함.
 
-핵심 : if frame rate drop, should be compensate for it.
+즉, 다른 frame rate에서도 속도 등이 frame rate에 영향을 받지 않게 만들어야 한다.
+
+해결 방법의 핵심 : if frame rate drop, should be compensate for it.
 
 -   case 1. 60fps -> 30fps
     update 호출이 덜 일어나지만 dt가 늘어났으므로 dt를 곱하여 compensate.
@@ -141,9 +143,12 @@ unity, love2d 등 웬만한 게임 엔진은 game loop를 메서드 형식으로
 -   case 2. 60fps -> 120fps
     update 호출이 더 자주 일어나지만 dt가 줄어들었으므로 dt를 곱하면 compensate됨.
 
-```lua
-player.x = player.x - player.speed * dt
-```
+-   dt를 곱함으로써 frame rate에 영향을 받지 않고, '초' 단위로 속도를 조절할 수 있게 됨.
+
+    ```lua
+    -- 17pixel per second
+    player.x = player.x + 17 * dt
+    ```
 
 ## SLD2
 

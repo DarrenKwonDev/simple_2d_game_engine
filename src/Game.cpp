@@ -98,7 +98,7 @@ glm::vec2 playerVelocity;
 // one time setup
 void Game::Setup() {
     playerPosition = glm::vec2(10.0, 20.0);
-    playerVelocity = glm::vec2(1.0, 0.0);
+    playerVelocity = glm::vec2(100.0, 0.0);
 }
 
 // called every frame
@@ -113,10 +113,14 @@ void Game::Update() {
         SDL_Delay(timeToWait);
     }
 
+    // deltaTime = 현재시간 - 이전프레임의시간;
+    double deltaTime = (SDL_GetTicks() - millisecPrevFrame) / 1000.0;
+
     millisecPrevFrame = SDL_GetTicks();
 
-    playerPosition.x += playerVelocity.x;
-    playerPosition.y += playerVelocity.y;
+    // playerVelocity.x pixel per sec
+    playerPosition.x += (playerVelocity.x * deltaTime);
+    playerPosition.y += (playerVelocity.y * deltaTime);
 }
 
 void Game::Render() {

@@ -8,7 +8,7 @@
 class Game {
 private:
     bool mIsRunning;                // check window and renderer is setted.
-    uint32_t millisecPrevFrame = 0; // derived from SDL_GetTicks64
+    uint32_t millisecPrevFrame = 0; // derived from SDL_GetTicks()
     SDL_Window* mWindow;
     SDL_Renderer* mRenderer;
 
