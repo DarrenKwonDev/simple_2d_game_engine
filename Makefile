@@ -21,6 +21,8 @@ build:
 	-lSDL2_ttf \
 	-lSDL2_mixer \
 	-llua5.4 \
+	-lspdlog \
+	-lfmt \
 	-I"./libs/" \
 	-I/opt/homebrew/include \
 	-D_THREAD_SAFE \

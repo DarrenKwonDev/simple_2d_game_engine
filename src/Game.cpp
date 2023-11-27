@@ -6,21 +6,22 @@
 #include "glm/glm.hpp"
 
 #include "Game.h"
+#include "Logger.h"
 
 using namespace std;
 
 Game::Game() {
-    cout << "Game constructor called" << endl;
     mIsRunning = false;
+    Logger::Log("Game constructor called");
 }
 
 Game::~Game() {
-    cout << "Game deconstructor called" << endl;
+    Logger::Log("Game deconstructor called");
 }
 
 void Game::Initialize() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        cerr << "Error initializing SDL" << endl;
+        Logger::Err("Error initializing SDL");
         return;
     }
 
@@ -37,7 +38,7 @@ void Game::Initialize() {
         SDL_WINDOW_BORDERLESS);
 
     if (!mWindow) {
-        cerr << "Error creating SDL window" << endl;
+        Logger::Err("Error creating SDL window");
         return;
     }
 
@@ -49,7 +50,7 @@ void Game::Initialize() {
     );
 
     if (!mRenderer) {
-        cerr << "Error creating SDL renderer" << endl;
+        Logger::Err("Error creating SDL renderer");
         return;
     }
 
