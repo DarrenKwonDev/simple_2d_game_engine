@@ -106,7 +106,12 @@ void Game::Update() {
     // https://wiki.libsdl.org/SDL2/SDL_Delay
     // 지정된 시간 동안 현재 thread에서 벗어나 다른 작업을 하도록
     // context switching을 의도하고 OS scheduler에게 위임.
-    SDL_Delay(MILLISEC_PER_FRAME);
+    int timeToWait = MILLISEC_PER_FRAME - (SDL_GetTicks() - millisecPrevFrame);
+    if (timeToWait > 0 && timeToWait <= MILLISEC_PER_FRAME) {
+        SDL_Delay(timeToWait);
+    }
+
+    millisecPrevFrame = SDL_GetTicks();
 
     playerPosition.x += playerVelocity.x;
     playerPosition.y += playerVelocity.y;
