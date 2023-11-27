@@ -1,8 +1,25 @@
+
+
+<!-- toc -->
+
+- [2d-game-engine-poc](#2d-game-engine-poc)
+  * [configure](#configure)
+    + [deps](#deps)
+    + [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library%EB%A5%BC-pre-compiled-binary%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-vs-%EB%82%B4%EC%9E%A5-lib%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
+  * [game things](#game-things)
+    + [full screen vs fake full screen(borderless window)](#full-screen-vs-fake-full-screenborderless-window)
+    + [rendererFlags](#rendererflags)
+    + [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-%EC%88%98%EC%A7%81-%EB%8F%99%EA%B8%B0%ED%99%94)
+
+<!-- tocstop -->
+
 # 2d-game-engine-poc
 
 lectured by [pikuma game engine](https://github.com/gustavopezzi/game-engine-cpp-2d/tree/main) lecture
 
-## deps
+## configure
+
+### deps
 
 ```bash
 brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer lua
@@ -71,12 +88,12 @@ SDL_CreateRenderer(
 
 ### VSync (vertical sync, 수직 동기화)
 
-아래와 같은 tearing은 게임이 매 프레임마다 렌더링을 하는 사이 모니터의 주사율과 맞지 않아서 그리는 도중을 보여줘서 보이는 현상임.
+아래와 같은 tearing은 게임이 매 프레임마다 렌더링을 하는 사이 모니터의 refresh rate(주사율, 재생률) 과 맞지 않아서 그리는 도중을 보여줘서 보이는 현상임.
 
 <img src="./imgs/screen_tearing.webp" />
 
-이를 위해 게임 렌더러의 프레젠테이션(화면에 그리는 것)을 모니터의 리프레시 레이트(주사율)와 동기화하는 기술이 vsync이며 tearing 방지 한다.
+이를 위해 게임 렌더러의 프레젠테이션(화면에 그리는 것)을 모니터의 refresh rate와 동기화하는 기술이 vsync이며 결과적으론 tearing을 방지 한다.
 
-추가로, GPU가 모니터의 리프레시 레이트보다 더 많은 프레임을 렌더링하지 않도록 제한함으로써, 불필요한 GPU 부하를 줄일 수도 있다.
+추가로, GPU가 모니터의 refresh rate보다 더 많은 프레임을 렌더링하지 않도록 제한함으로써, 불필요한 GPU 부하를 줄일 수도 있다.
 
-문제는 모니터의 refresh rate가 60Hz라면, 60fps로 제한되며 (60fps 이상으로 렌더링해도 60fps로 제한됨) 만약 60fps를 못 맞춘다면 나누어 떨어지는 30fps로 렌더링됨. 결국 GPU가 힘들면 fps가 낮아짐.
+문제는 모니터의 refresh rate가 60Hz라면, 게임의 fps는 60fps로 제한되며 (60fps 이상으로 렌더링해도 60fps로 제한됨) 만약 60fps를 못 맞춘다면 나누어 떨어지는 30fps로 렌더링됨. 결국 GPU가 힘들면 fps가 낮아짐.
