@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL.h>
 
-#define FPS (30)
+#define FPS (60)
 #define MILLISEC_PER_FRAME (1000 / FPS)
 
 class Game {

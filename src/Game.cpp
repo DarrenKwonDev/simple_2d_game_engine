@@ -107,6 +107,8 @@ void Game::Update() {
     // 지정된 시간 동안 현재 thread에서 벗어나 다른 작업을 하도록
     // context switching을 의도하고 OS scheduler에게 위임.
     int timeToWait = MILLISEC_PER_FRAME - (SDL_GetTicks() - millisecPrevFrame);
+
+    // 너무 빠를 경우 대기.
     if (timeToWait > 0 && timeToWait <= MILLISEC_PER_FRAME) {
         SDL_Delay(timeToWait);
     }
