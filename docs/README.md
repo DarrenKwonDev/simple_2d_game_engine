@@ -1,18 +1,20 @@
+
+
 <!-- toc -->
 
--   [2d-game-engine-poc](#2d-game-engine-poc)
-    -   [configure](#configure)
-        -   [deps](#deps)
-        -   [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library를-pre-compiled-binary로-사용하기-vs-내장-lib로-사용하기)
-    -   [game things](#game-things)
-        -   [full screen vs fake full screen(borderless window)](#full-screen-vs-fake-full-screenborderless-window)
-        -   [rendererFlags](#rendererflags)
-        -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
-        -   [Double-Buffered Renderer](#double-buffered-renderer)
-        -   [Fixed Time Step(Frame Rate Independence)](#fixed-time-stepframe-rate-independence)
-        -   [frame drop compensate](#frame-drop-compensate)
-    -   [SLD2](#sld2)
-        -   [surface vs texture](#surface-vs-texture)
+- [2d-game-engine-poc](#2d-game-engine-poc)
+  * [configure](#configure)
+    + [deps](#deps)
+    + [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library%EB%A5%BC-pre-compiled-binary%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-vs-%EB%82%B4%EC%9E%A5-lib%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
+  * [game things](#game-things)
+    + [full screen vs fake full screen(borderless window)](#full-screen-vs-fake-full-screenborderless-window)
+    + [rendererFlags](#rendererflags)
+    + [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-%EC%88%98%EC%A7%81-%EB%8F%99%EA%B8%B0%ED%99%94)
+    + [Double-Buffered Renderer](#double-buffered-renderer)
+    + [Fixed Time Step(Frame Rate Independence)](#fixed-time-stepframe-rate-independence)
+    + [frame drop compensate](#frame-drop-compensate)
+  * [SLD2](#sld2)
+    + [surface vs texture](#surface-vs-texture)
 
 <!-- tocstop -->
 
