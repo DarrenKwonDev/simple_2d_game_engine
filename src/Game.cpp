@@ -64,6 +64,7 @@ void Game::RunGameLoop() {
         Game::ProcessInput();
         Game::Update();
         Game::Render();
+        // blocking delay until we reach target frame time in milliseconds
     }
 }
 
@@ -102,6 +103,17 @@ void Game::Setup() {
 
 // called every frame
 void Game::Update() {
+    // Capping the Game Framerate
+    // if update too fast, block loop.
+    // SDL_TICKS_PASSED(A,B).
+    // check A pass B?
+    // 즉, 전의 실행시간이 MILLISEC_PER_FRAME 을 더한 것보다 더 지나서 다시 update를 해도 되는가에 대한 로직.
+    while (!SDL_TICKS_PASSED(SDL_GetTicks(), millisecPrevFrame + MILLISEC_PER_FRAME)) {
+        // nothing.
+    };
+
+    millisecPrevFrame = SDL_GetTicks();
+
     playerPosition.x += playerVelocity.x;
     playerPosition.y += playerVelocity.y;
 }

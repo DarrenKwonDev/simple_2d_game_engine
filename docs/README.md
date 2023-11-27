@@ -9,6 +9,7 @@
         -   [rendererFlags](#rendererflags)
         -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
         -   [Double-Buffered Renderer](#double-buffered-renderer)
+        -   [Fixed Time Step(Frame Rate Independence)](#fixed-time-stepframe-rate-independence)
         -   [frame drop compensate](#frame-drop-compensate)
     -   [SLD2](#sld2)
         -   [surface vs texture](#surface-vs-texture)
@@ -104,6 +105,29 @@ back buffer와 front buffer의 이중 운용.
 draw를 back buffer에서 먼저하고 front buffer로 swap하는 방식.  
 glitch를 방지하고, 렌더링이 완료되지 않은 프레임은 화면에 보여지지 않는 장점이 있음.
 
+### Fixed Time Step(Frame Rate Independence)
+
+아래 코드는 while loop를 도는데 구동되는 컴퓨터의 CPU 성능에 의존적이다.
+즉, 게임을 구동하는 클라이언트마다 동일한 게임 경험을 줄 수 없다는 것을 의미한다.
+
+```cpp
+void Game::RunGameLoop() {
+    Game::Setup();
+    while (mIsRunning) {
+        Game::ProcessInput();
+        Game::Update();
+        Game::Render();
+
+    }
+}
+```
+
+이 문제에 대한 해결책으로
+
+-   고정 프레임 레이트 업데이트
+-   시간 기반 업데이트
+-   등... 이 존재한다.
+
 ### frame drop compensate
 
 unity, love2d 등 웬만한 게임 엔진은 game loop를 메서드 형식으로 노출하고 있다. 그 중에서도 update는 frame마다 호출된다.
@@ -127,3 +151,7 @@ SDL_Surface는 이미지 처리나 간단한 소프트웨어 렌더링에 적합
 일반적으로 이미지 파일을 로드하고 조작할 때는 SDL_Surface를 사용하고, 화면에 이미지를 렌더링할 때는 SDL_Texture로 변환하여 사용합니다.
 
 SDL_Surface는 시스템 메모리에 저장되고, SDL_Texture는 GPU의 비디오 메모리에 저장됩니다.
+
+```
+
+```

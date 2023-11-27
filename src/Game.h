@@ -2,9 +2,13 @@
 
 #include <SDL2/SDL.h>
 
+#define FPS (30)
+#define MILLISEC_PER_FRAME (1000 / FPS)
+
 class Game {
 private:
-    bool mIsRunning; // if window and renderer set OK.
+    bool mIsRunning;                // check window and renderer is setted.
+    uint32_t millisecPrevFrame = 0; // derived from SDL_GetTicks64
     SDL_Window* mWindow;
     SDL_Renderer* mRenderer;
 
