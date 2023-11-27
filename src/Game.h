@@ -13,7 +13,7 @@ public:
     virtual ~Game();
 
     void Initialize();
-    void Run();
+    void RunGameLoop();
     void Setup();
     void ProcessInput();
     void Update();

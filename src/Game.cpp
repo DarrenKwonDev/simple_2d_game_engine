@@ -56,7 +56,7 @@ void Game::Initialize() {
     mIsRunning = true;
 }
 
-void Game::Run() {
+void Game::RunGameLoop() {
     Game::Setup();
     while (mIsRunning) {
         Game::ProcessInput();
