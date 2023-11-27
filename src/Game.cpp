@@ -8,6 +8,7 @@ using namespace std;
 
 Game::Game() {
     cout << "Game constructor called" << endl;
+    this->mIsRunning = false;
 }
 
 Game::~Game() {
@@ -41,17 +42,32 @@ void Game::Initialize() {
         cerr << "Error creating SDL renderer" << endl;
         return;
     }
+
+    this->mIsRunning = true;
 }
 
-void Game::Run() {
-    // while (true) {
-    //     Game::ProcessInput();
-    //     Game::Update();
-    //     Game::Render();
-    // }
-}
-
+// main game loop three logics : ProcessInput, Update, Render.
 void Game::ProcessInput() {
+    SDL_Event sdlEvent;
+
+    // Poll for currently pending events
+    while (SDL_PollEvent(&sdlEvent)) {
+        switch (sdlEvent.type) {
+        // user press 'x' window close btn.
+        case SDL_QUIT:
+            this->mIsRunning = false;
+            break;
+
+        case SDL_KEYDOWN:
+            if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
+                this->mIsRunning = false;
+            };
+            break;
+
+        default:
+            break;
+        }
+    };
 }
 
 void Game::Update() {
@@ -60,6 +76,15 @@ void Game::Update() {
 void Game::Render() {
 }
 
+void Game::Run() {
+    while (this->mIsRunning) {
+        Game::ProcessInput();
+        Game::Update();
+        Game::Render();
+    }
+}
+
+// clean up
 void Game::Destroy() {
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);

@@ -4,6 +4,7 @@
 
 class Game {
 private:
+    bool mIsRunning; // if window and renderer set OK.
     SDL_Window* mWindow;
     SDL_Renderer* mRenderer;
 
