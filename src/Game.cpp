@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include "Game.h"
 
@@ -95,8 +96,34 @@ void Game::Update() {
 }
 
 void Game::Render() {
-    SDL_SetRenderDrawColor(mRenderer, 21, 21, 21, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(mRenderer, 153, 153, 153, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(mRenderer); // clears the entire rendering target
+
+    // 경로에 주의.
+    // 상대 경로를 인식하지 못함.
+    // 현재 작업 디렉토리(Current Working Directory)를 기준으로 작성해야 함.
+    SDL_Surface* surface = IMG_Load((string(SDL_GetBasePath()) + "/assets/images/tank-tiger-right.png").c_str());
+    if (surface == NULL) {
+        cerr << "Image Load Error " << SDL_GetError() << endl;
+        return;
+    }
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
+    if (texture == NULL) {
+        printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
+        return;
+    }
+
+    // 이미 텍스처로 변환된 후에는 SDL_Surface 객체가 더 이상 필요하지 않으므로 메모리를 해제합니다.
+    SDL_FreeSurface(surface);
+
+    SDL_Rect dstRect = {
+        10, 10, // x, y
+        32, 32  // w, h
+    };
+    SDL_RenderCopy(mRenderer, texture, NULL, &dstRect);
+
+    // 사용이 끝난 후에는 SDL_Texture 객체 정리.
+    SDL_DestroyTexture(texture);
 
     // present. (as double buffered renderer, swap back/front buffer)
     SDL_RenderPresent(mRenderer);

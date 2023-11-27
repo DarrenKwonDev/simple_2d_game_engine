@@ -9,6 +9,8 @@
         -   [rendererFlags](#rendererflags)
         -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
         -   [Double-Buffered Renderer](#double-buffered-renderer)
+    -   [SLD2](#sld2)
+        -   [surface vs texture](#surface-vs-texture)
 
 <!-- tocstop -->
 
@@ -100,3 +102,13 @@ SDL_CreateRenderer(
 back buffer와 front buffer의 이중 운용.  
 draw를 back buffer에서 먼저하고 front buffer로 swap하는 방식.  
 glitch를 방지하고, 렌더링이 완료되지 않은 프레임은 화면에 보여지지 않는 장점이 있음.
+
+## SLD2
+
+### surface vs texture
+
+SDL_Surface는 이미지 처리나 간단한 소프트웨어 렌더링에 적합하고, SDL_Texture는 GPU를 사용한 빠른 화면 렌더링에 적합합니다.
+
+일반적으로 이미지 파일을 로드하고 조작할 때는 SDL_Surface를 사용하고, 화면에 이미지를 렌더링할 때는 SDL_Texture로 변환하여 사용합니다.
+
+SDL_Surface는 시스템 메모리에 저장되고, SDL_Texture는 GPU의 비디오 메모리에 저장됩니다.

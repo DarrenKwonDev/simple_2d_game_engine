@@ -30,6 +30,6 @@ run:
 	./$(EXECUTABLE_NAME)
 
 clean:
-	rm $(EXECUTABLE_NAME)
+	rm -f $(EXECUTABLE_NAME)
 
 .PHONY: all build run clean
