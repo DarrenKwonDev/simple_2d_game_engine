@@ -10,9 +10,11 @@
         -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
         -   [Double-Buffered Renderer](#double-buffered-renderer)
         -   [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
-        -   [frame drop compensate with delta time](#frame-drop-compensate-with-delta-time)
+        -   [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
+        -   [Determinism](#determinism)
     -   [SLD2](#sld2)
         -   [surface vs texture](#surface-vs-texture)
+    -   [resources](#resources)
 
 <!-- tocstop -->
 
@@ -127,7 +129,7 @@ void Game::RunGameLoop() {
 -   시간 기반 업데이트
 -   등... 이 존재한다.
 
-### frame drop compensate with delta time
+### Variable Delta-Time (frame drop compensate with delta time)
 
 unity, love2d 등 웬만한 게임 엔진은 game loop를 메서드 형식으로 노출하고 있다. 그 중에서도 update는 frame마다 호출된다.
 
@@ -150,6 +152,16 @@ unity, love2d 등 웬만한 게임 엔진은 game loop를 메서드 형식으로
     player.x = player.x + 17 * dt
     ```
 
+### Determinism
+
+어떤 것이 Deterministic 하다는 것은, 동일한 입력을 제공할 때마다 정확히 동일한 출력이 되돌아오는 것을 의미한다.
+
+대부분 컴퓨터에서는 결정적인 것이 많으므로 비결정적인 것을 살펴보는 것이 더 빠르다. 멀티 쓰레딩, 네트워크, 가변 delta time을 활용한 compensating 등이 비결정적이다. 멀티 쓰레딩을 해봤다면, 동일한 queue에 데이터를 각 쓰레드가 데이터를 던졌다면, 그 순서가 매 실행마다 달라지는 것을 체험해봤을 것이다.
+
+여기서는 게임을 다루고 있으니 variable delta time에 대해서 이야기해보자. variable delta time을 활용했다면 비결정적이다. 왜냐하면, 동일한 입력을 제공했을 때마다 다른 delta time이 반환되기 때문이다.
+
+결정적인 constant delta time을 이용하려면 단순히 `1 / fps`를 활용하면 된다.
+
 ## SLD2
 
 ### surface vs texture
@@ -160,6 +172,6 @@ SDL_Surface는 이미지 처리나 간단한 소프트웨어 렌더링에 적합
 
 SDL_Surface는 시스템 메모리에 저장되고, SDL_Texture는 GPU의 비디오 메모리에 저장됩니다.
 
-```
+## resources
 
-```
+https://gafferongames.com/post/fix_your_timestep/
