@@ -1,8 +1,11 @@
 #pragma once
 
+#include <SDL2/SDL.h>
+
 class Game {
 private:
-    //
+    SDL_Window* mWindow;
+    SDL_Renderer* mRenderer;
 
 public:
     Game();
