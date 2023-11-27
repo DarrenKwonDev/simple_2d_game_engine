@@ -1,15 +1,13 @@
-
-
 <!-- toc -->
 
-- [2d-game-engine-poc](#2d-game-engine-poc)
-  * [configure](#configure)
-    + [deps](#deps)
-    + [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library%EB%A5%BC-pre-compiled-binary%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-vs-%EB%82%B4%EC%9E%A5-lib%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
-  * [game things](#game-things)
-    + [full screen vs fake full screen(borderless window)](#full-screen-vs-fake-full-screenborderless-window)
-    + [rendererFlags](#rendererflags)
-    + [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-%EC%88%98%EC%A7%81-%EB%8F%99%EA%B8%B0%ED%99%94)
+-   [2d-game-engine-poc](#2d-game-engine-poc)
+    -   [configure](#configure)
+        -   [deps](#deps)
+        -   [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library를-pre-compiled-binary로-사용하기-vs-내장-lib로-사용하기)
+    -   [game things](#game-things)
+        -   [full screen vs fake full screen(borderless window)](#full-screen-vs-fake-full-screenborderless-window)
+        -   [rendererFlags](#rendererflags)
+        -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
 
 <!-- tocstop -->
 
@@ -96,4 +94,4 @@ SDL_CreateRenderer(
 
 추가로, GPU가 모니터의 refresh rate보다 더 많은 프레임을 렌더링하지 않도록 제한함으로써, 불필요한 GPU 부하를 줄일 수도 있다.
 
-문제는 모니터의 refresh rate가 60Hz라면, 게임의 fps는 60fps로 제한되며 (60fps 이상으로 렌더링해도 60fps로 제한됨) 만약 60fps를 못 맞춘다면 나누어 떨어지는 30fps로 렌더링됨. 결국 GPU가 힘들면 fps가 낮아짐.
+문제는 모니터의 refresh rate가 60Hz라면, 게임의 fps는 60fps로 제한되며 (60fps 이상으로 렌더링해도 60fps 이상이라고 인식하지 못함. 애초에 주사율이 초당 60번 refresh되니까.) 만약 60fps를 못 맞춘다면 나누어 떨어지는 30fps로 렌더링됨. 결국 GPU가 힘들면 fps가 낮아짐.
