@@ -126,17 +126,18 @@ data-oriented design을 통해 cache-friendly하게 구현하느 것이 목표�
 
 OOP와 ECS의 가장 큰 차이점은, OOP에서는 base class와 derived class간의 상속과 위계가 강조되지만 ECS에서는 Component가 데이터를 소유하고, 엔티티는 단순히 컴포넌트의 컨테이너 역할을 한다는 것입니다.
 
--   Entity
+-   Entity(id)
 
     -   게임 내의 모든 객체나 아이템은 엔티티로 표현됩니다. 엔티티 자체는 단순히 고유 식별자(ID)를 가진 컨테이너에 불과하며, 실제로는 아무런 데이터나 행동을 직접 가지지 않습니다.
 
--   Component
+-   Component(data)
 
     -   pure data
+    -   pure data라는 관점에서 plain old data(POD)를 표현하기 위한 struct로 구현하는게 잘 어울린다. 그 과정에서 memory padding을 고려하는 것이 좋다. (#pragma pack을 활용하거나 수동으로 구조체 멤버의 순서를 조정하자.)
     -   컴포넌트는 엔티티의 데이터를 나타냅니다. 예를 들어, 위치, 속도, 건강 상태 등과 같은 속성들이 컴포넌트로 표현됩니다. 이들은 엔티티에 첨부되어 엔티티의 상태를 정의합니다.
 
--   System
-    -   entity는 id, component는 data, system은 behavior를 담당한다. 즉, component가 소유한 상태 데이터를 변경하는 것이 system의 역할이다.
+-   System(transform data logic)
+    -   entity는 id, component는 data, system은 behavior를 담당한다. 즉, component의 상태 데이터를 변경하는 것이 system의 역할이다.
 
 #### component의 memory contiguous한 배치
 
