@@ -1,24 +1,24 @@
-
-
 <!-- toc -->
 
-- [2d-game-engine-poc](#2d-game-engine-poc)
-  * [configure](#configure)
-    + [deps](#deps)
-    + [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library%EB%A5%BC-pre-compiled-binary%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-vs-%EB%82%B4%EC%9E%A5-lib%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
-  * [game things](#game-things)
-    + [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-%EC%88%98%EC%A7%81-%EB%8F%99%EA%B8%B0%ED%99%94)
-    + [Double-Buffered Renderer](#double-buffered-renderer)
-    + [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
-    + [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
-    + [Determinism](#determinism)
-  * [SLD2](#sld2)
-    + [paths](#paths)
-    + [full screen, fake full screen](#full-screen-fake-full-screen)
-    + [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
-    + [surface vs texture](#surface-vs-texture)
-  * [known issues](#known-issues)
-  * [resources](#resources)
+-   [2d-game-engine-poc](#2d-game-engine-poc)
+    -   [configure](#configure)
+        -   [deps](#deps)
+        -   [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library를-pre-compiled-binary로-사용하기-vs-내장-lib로-사용하기)
+    -   [game things](#game-things)
+        -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
+        -   [Double-Buffered Renderer](#double-buffered-renderer)
+        -   [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
+        -   [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
+        -   [Determinism](#determinism)
+        -   [ECS(Entity Component System)](#ecsentity-component-system)
+            -   [component의 memory contiguous한 배치](#component의-memory-contiguous한-배치)
+    -   [SLD2](#sld2)
+        -   [paths](#paths)
+        -   [full screen, fake full screen](#full-screen-fake-full-screen)
+        -   [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
+        -   [surface vs texture](#surface-vs-texture)
+    -   [known issues](#known-issues)
+    -   [resources](#resources)
 
 <!-- tocstop -->
 
@@ -118,6 +118,34 @@ unity, love2d 등 웬만한 게임 엔진은 game loop를 메서드 형식으로
 
 결정적인 constant delta time을 이용하려면 단순히 `1 / fps`를 활용하면 된다.
 
+### ECS(Entity Component System)
+
+box(entity)에 box collider(component)를 넣어 특성을 부여하는 식의 구현은 unity을 비롯한 게임 엔진에서 흔히 볼 수 있는 시스템.
+
+data-oriented design을 통해 cache-friendly하게 구현하느 것이 목표임. 따라서 OOP와는 다른 구조를 가짐.
+
+OOP와 ECS의 가장 큰 차이점은, OOP에서는 base class와 derived class간의 상속과 위계가 강조되지만 ECS에서는 Component가 데이터를 소유하고, 엔티티는 단순히 컴포넌트의 컨테이너 역할을 한다는 것입니다.
+
+-   Entity
+
+    -   게임 내의 모든 객체나 아이템은 엔티티로 표현됩니다. 엔티티 자체는 단순히 고유 식별자(ID)를 가진 컨테이너에 불과하며, 실제로는 아무런 데이터나 행동을 직접 가지지 않습니다.
+
+-   Component
+
+    -   pure data
+    -   컴포넌트는 엔티티의 데이터를 나타냅니다. 예를 들어, 위치, 속도, 건강 상태 등과 같은 속성들이 컴포넌트로 표현됩니다. 이들은 엔티티에 첨부되어 엔티티의 상태를 정의합니다.
+
+-   System
+    -   entity는 id, component는 data, system은 behavior를 담당한다. 즉, component가 소유한 상태 데이터를 변경하는 것이 system의 역할이다.
+
+#### component의 memory contiguous한 배치
+
+ECS에서는 컴포넌트를 사용하여 데이터를 저장합니다. 이 컴포넌트들은 종종 메모리 상에서 연속적으로 배치됩니다. 즉, memory contiguity (메모리 연속성)를 지키도록 배치됩니다.
+
+-   캐시 친화적 접근: 시스템이 특정 컴포넌트 유형을 작업할 때, 연속된 메모리 레이아웃 덕분에 캐시 효율성이 높아집니다. 예를 들어, 물리 시스템이 모든 위치 컴포넌트를 순차적으로 처리할 때, 연속된 메모리 레이아웃은 캐시 적중률을 높여 성능을 향상시킵니다.
+
+-   데이터 지향 설계: ECS는 데이터 지향 설계 원칙을 따릅니다. 이는 데이터를 중심으로 시스템을 구성하여, 메모리 접근 패턴을 최적화하는 것을 목표로 합니다. 이러한 접근 방식은 메모리 연속성을 중시합니다.
+
 ## SLD2
 
 ### paths
@@ -202,4 +230,5 @@ SDL_Surface는 시스템 메모리에 저장되고, SDL_Texture는 GPU의 비디
 
 ## resources
 
-https://gafferongames.com/post/fix_your_timestep/
+-   [SDL 프로그래밍 컴플리트 가이드](https://wikidocs.net/book/6636)
+    https://gafferongames.com/post/fix_your_timestep/
