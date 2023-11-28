@@ -9,7 +9,7 @@
 #include "imgui/imgui.h"
 #include "sol/sol.hpp"
 
-#include "Game.h"
+#include "Game/Game.h"
 
 using namespace std;
 

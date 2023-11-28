@@ -1,26 +1,35 @@
 
+EXECUTABLE_NAME = gameengine
+SRCS = $(wildcard src/*.cpp) $(wildcard src/**/*.cpp)
+
 CXX = clang++
 CXX_STANDARD = c++17
-CXX_WARNINGS = -Wall
+CXX_WARNINGS = -Wall -Wfatal-errors -Wshadow -Wnon-virtual-dtor -Wcast-align
+# -Wfatal-errors : 첫 번째 오류가 발생하면 즉시 컴파일을 중단. 에러가 너무 많을 시 유용
+# -Wshadow : 지역 변수가 전역 변수를 가리는 경우 경고
+# -Wnon-virtual-dtor : 가상 소멸자가 아닌 클래스의 소멸자를 가상 소멸자로 선언하지 않은 경우 경고
+# -Wcast-align : 잘못된 메모리 정렬로 인한 캐스팅을 경고
 
-CXX_COMPILER_FLAGS = -std=$(CXX_STANDARD) $(CXX_WARNINGS)
-# CXX_LINKER_FLAGS = -I $(INCLUDE_DIR)
 
-EXCLUDE_FILES = src/_videoCheck.cpp src/_test.cpp
+CXX_STD_WARNINGS = -std=$(CXX_STANDARD) $(CXX_WARNINGS)
 
-EXECUTABLE_NAME = gameengine
-
-CXX_COMPILER_CALL = $(CXX) $(CXX_COMPILER_FLAGS) src/*.cpp \
-	-L/opt/homebrew/lib \
-	-lSDL2 \
+# Linker Flags, Libraries (ld = linker)
+LDFLAGS = -L/opt/homebrew/lib 
+LDLIBS = -lSDL2 \
 	-lSDL2_image \
 	-lSDL2_ttf \
 	-lSDL2_mixer \
 	-llua5.4 \
 	-lspdlog \
-	-lfmt \
-	-I"./libs/" \
-	-I/opt/homebrew/include \
+	-lfmt
+INCLUDE_PATHS = -I"./libs/" \
+	-I/opt/homebrew/include
+
+CXX_COMPILER_CALL = $(CXX) $(CXX_STD_WARNINGS) \
+	$(SRCS) \
+	$(LDFLAGS)\
+	$(LDLIBS)\
+	$(INCLUDE_PATHS) \
 	-D_THREAD_SAFE \
 	-o $(EXECUTABLE_NAME)
 
@@ -33,14 +42,10 @@ verbose:
 	$(CXX_COMPILER_CALL) -v
 
 videoCheck:
-	$(CXX) $(CXX_COMPILER_FLAGS) _videoCheck.cpp \
-	-L/opt/homebrew/lib \
-	-lSDL2 \
-	-lSDL2_image \
-	-lSDL2_ttf \
-	-lSDL2_mixer \
-	-I"./libs/" \
-	-I/opt/homebrew/include \
+	$(CXX) $(CXX_STD_WARNINGS) _videoCheck.cpp \
+	$(LDFLAGS)\
+	$(LDLIBS)\
+	$(INCLUDE_PATHS) \
 	-D_THREAD_SAFE \
 	-o videoCheck \
 	&& ./videoCheck
