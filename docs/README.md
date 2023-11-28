@@ -9,7 +9,6 @@
   * [game things](#game-things)
     + [다중 모니터 문제](#%EB%8B%A4%EC%A4%91-%EB%AA%A8%EB%8B%88%ED%84%B0-%EB%AC%B8%EC%A0%9C)
       - [화면 분할 문제](#%ED%99%94%EB%A9%B4-%EB%B6%84%ED%95%A0-%EB%AC%B8%EC%A0%9C)
-    + [rendererFlags](#rendererflags)
     + [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-%EC%88%98%EC%A7%81-%EB%8F%99%EA%B8%B0%ED%99%94)
     + [Double-Buffered Renderer](#double-buffered-renderer)
     + [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
@@ -18,6 +17,7 @@
   * [SLD2](#sld2)
     + [paths](#paths)
     + [full screen, fake full screen](#full-screen-fake-full-screen)
+    + [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
     + [surface vs texture](#surface-vs-texture)
   * [resources](#resources)
 
@@ -53,25 +53,6 @@ brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer lua
 <img src="./imgs/display.png" />
 
 내장 모니터가 3456 x 2234임에도 화면 분할 기능을 사용하면 1728 x 2234로 나눠지게 된다.
-
-### rendererFlags
-
-SDL_CreateRenderer에서 GPU 사용이 가능
-
-[SDL_RendererFlags](https://wiki.libsdl.org/SDL2/SDL_RendererFlags) 참고.
-
--   SDL_RENDERER_SOFTWARE : 하드웨어 가속 사용 안하고 CPU 사용
--   SDL_RENDERER_ACCELERATED : dedicated graphics card (GPU) 사용
--   SDL_RENDERER_PRESENTVSYNC : VSync 사용. tearing 방지
--   SDL_RENDERER_TARGETTEXTURE
-
-```cpp
-SDL_CreateRenderer(
-    window,
-    -1,
-    SDL_RENDERER_ACCELERATED
-);
-```
 
 ### VSync (vertical sync, 수직 동기화)
 
@@ -187,6 +168,25 @@ Fake Fullscreen은 사실상 크기를 조정한 창 모드. (전체 창모드)
     -   전체 화면을 채우는 보더리스 창을 생성하는 것과 유사.
 -   SDL_WINDOW_BORDERLESS
     -   전체 화면과 크게 관련 없으나 전체 화면을 꽉 채우는 borderless 창을 생성하는 것과 유사.
+
+### rendererFlags and hardware acceleration
+
+SDL_CreateRenderer에서 GPU 사용이 가능
+
+[SDL_RendererFlags](https://wiki.libsdl.org/SDL2/SDL_RendererFlags) 참고.
+
+-   SDL_RENDERER_SOFTWARE : 하드웨어 가속 사용 안하고 CPU 사용
+-   SDL_RENDERER_ACCELERATED : dedicated graphics card (GPU) 사용
+-   SDL_RENDERER_PRESENTVSYNC : VSync 사용. tearing 방지
+-   SDL_RENDERER_TARGETTEXTURE
+
+```cpp
+SDL_CreateRenderer(
+    window,
+    -1,
+    SDL_RENDERER_ACCELERATED
+);
+```
 
 ### surface vs texture
 
