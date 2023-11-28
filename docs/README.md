@@ -7,8 +7,6 @@
     + [deps](#deps)
     + [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library%EB%A5%BC-pre-compiled-binary%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-vs-%EB%82%B4%EC%9E%A5-lib%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
   * [game things](#game-things)
-    + [다중 모니터 문제](#%EB%8B%A4%EC%A4%91-%EB%AA%A8%EB%8B%88%ED%84%B0-%EB%AC%B8%EC%A0%9C)
-      - [화면 분할 문제](#%ED%99%94%EB%A9%B4-%EB%B6%84%ED%95%A0-%EB%AC%B8%EC%A0%9C)
     + [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-%EC%88%98%EC%A7%81-%EB%8F%99%EA%B8%B0%ED%99%94)
     + [Double-Buffered Renderer](#double-buffered-renderer)
     + [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
@@ -19,6 +17,7 @@
     + [full screen, fake full screen](#full-screen-fake-full-screen)
     + [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
     + [surface vs texture](#surface-vs-texture)
+  * [known issues](#known-issues)
   * [resources](#resources)
 
 <!-- tocstop -->
@@ -45,14 +44,6 @@ brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer lua
     -   이 방식의 장점은, 커스터마이징이 용이하고 플랫폼에 종속되지 않는다는 것. 물론 손이 좀 더 가긴 한다.
 
 ## game things
-
-### 다중 모니터 문제
-
-#### 화면 분할 문제
-
-<img src="./imgs/display.png" />
-
-내장 모니터가 3456 x 2234임에도 화면 분할 기능을 사용하면 1728 x 2234로 나눠지게 된다.
 
 ### VSync (vertical sync, 수직 동기화)
 
@@ -195,6 +186,19 @@ SDL_Surface는 이미지 처리나 간단한 소프트웨어 렌더링에 적합
 일반적으로 이미지 파일을 로드하고 조작할 때는 SDL_Surface를 사용하고, 화면에 이미지를 렌더링할 때는 SDL_Texture로 변환하여 사용합니다.
 
 SDL_Surface는 시스템 메모리에 저장되고, SDL_Texture는 GPU의 비디오 메모리에 저장됩니다.
+
+## known issues
+
+-   다중 모니터 문제
+
+    -   전체 화면 문제
+        monitor 0, 1 두 개의 모니터가 존재할 때,
+        monitor 0에서 전체 화면 게임을 실행하면 monitor 1은 어떻게 해야 하는가? (모니터에 따라 동작이 다른 것을 확인)
+
+    -   화면 분할 문제
+
+        내장 모니터가 3456 x 2234임에도 화면 분할 기능을 사용하면 1728 x 2234로 나눠지게 된다.
+        전체 화면 게임을 실행할 경우 어떻게 대처할 것인가?
 
 ## resources
 
