@@ -1,20 +1,25 @@
+
+
 <!-- toc -->
 
--   [2d-game-engine-poc](#2d-game-engine-poc)
-    -   [configure](#configure)
-        -   [deps](#deps)
-        -   [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library를-pre-compiled-binary로-사용하기-vs-내장-lib로-사용하기)
-    -   [game things](#game-things)
-        -   [full screen vs fake full screen(borderless window)](#full-screen-vs-fake-full-screenborderless-window)
-        -   [rendererFlags](#rendererflags)
-        -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
-        -   [Double-Buffered Renderer](#double-buffered-renderer)
-        -   [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
-        -   [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
-        -   [Determinism](#determinism)
-    -   [SLD2](#sld2)
-        -   [surface vs texture](#surface-vs-texture)
-    -   [resources](#resources)
+- [2d-game-engine-poc](#2d-game-engine-poc)
+  * [configure](#configure)
+    + [deps](#deps)
+    + [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library%EB%A5%BC-pre-compiled-binary%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-vs-%EB%82%B4%EC%9E%A5-lib%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
+  * [game things](#game-things)
+    + [다중 모니터 문제](#%EB%8B%A4%EC%A4%91-%EB%AA%A8%EB%8B%88%ED%84%B0-%EB%AC%B8%EC%A0%9C)
+      - [화면 분할 문제](#%ED%99%94%EB%A9%B4-%EB%B6%84%ED%95%A0-%EB%AC%B8%EC%A0%9C)
+    + [rendererFlags](#rendererflags)
+    + [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-%EC%88%98%EC%A7%81-%EB%8F%99%EA%B8%B0%ED%99%94)
+    + [Double-Buffered Renderer](#double-buffered-renderer)
+    + [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
+    + [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
+    + [Determinism](#determinism)
+  * [SLD2](#sld2)
+    + [paths](#paths)
+    + [full screen, fake full screen](#full-screen-fake-full-screen)
+    + [surface vs texture](#surface-vs-texture)
+  * [resources](#resources)
 
 <!-- tocstop -->
 
@@ -26,30 +31,6 @@
 
 ```bash
 brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer lua
-
-# sd2 check
-sdl2-config --version # 2.28.5
-
-sdl2-config --libs
-# 링커 플래그 제공
-# 링커가 SDL2 라이브러리를 찾고 링크하는 데 필요한 설정을 제공합니다
-
-sdl2-config --cflags
-# 컴파일러 플래그 제공
-# SDL2 헤더 파일의 경로를 출력.
-# 컴파일러가 SDL2의 헤더 파일을 찾을 수 있도록 해줍니다.
-
-sdl2-config --libs --cflags # 동시에 출력
-
-brew info sdl2 # check include path
-
-# 현재 맥 환경에선 --cflags가 -I/opt/homebrew/include/SDL2 -D_THREAD_SAFE 를 출력함.
-# 문제는 이렇나 방식이면 #include <SDL.h> 방식으로 include해야 함.
-clang++ -Wall -std=c++17 Main.cpp $(sdl2-config --libs --cflags) -o Main
-
-# 코딩 컨벤션에 맞게 <SDL2/SDL.h> 로 사용하기 위해 -I 옵션을 수정하여 아래처럼 적용함.
-clang++ -Wall -std=c++17 Main.cpp -L/opt/homebrew/lib -lSDL2 -I/opt/homebrew/include -D_THREAD_SAFE -o Main
-
 ```
 
 ### library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기
@@ -65,10 +46,13 @@ clang++ -Wall -std=c++17 Main.cpp -L/opt/homebrew/lib -lSDL2 -I/opt/homebrew/inc
 
 ## game things
 
-### full screen vs fake full screen(borderless window)
+### 다중 모니터 문제
 
-찐 full screen은 다른 화면 전환이 번거로움. (전체 화면)
-Fake Fullscreen은 사실상 크기를 조정한 창 모드. (전체 창모드)
+#### 화면 분할 문제
+
+<img src="./imgs/display.png" />
+
+내장 모니터가 3456 x 2234임에도 화면 분할 기능을 사용하면 1728 x 2234로 나눠지게 된다.
 
 ### rendererFlags
 
@@ -163,6 +147,46 @@ unity, love2d 등 웬만한 게임 엔진은 game loop를 메서드 형식으로
 결정적인 constant delta time을 이용하려면 단순히 `1 / fps`를 활용하면 된다.
 
 ## SLD2
+
+### paths
+
+```bash
+# sd2 check
+sdl2-config --version # 2.28.5
+
+sdl2-config --libs
+# 링커 플래그 제공
+# 링커가 SDL2 라이브러리를 찾고 링크하는 데 필요한 설정을 제공합니다
+
+sdl2-config --cflags
+# 컴파일러 플래그 제공
+# SDL2 헤더 파일의 경로를 출력.
+# 컴파일러가 SDL2의 헤더 파일을 찾을 수 있도록 해줍니다.
+
+sdl2-config --libs --cflags # 동시에 출력
+
+# 현재 맥 환경에선 --cflags가 -I/opt/homebrew/include/SDL2 -D_THREAD_SAFE 를 출력함.
+# 문제는 이렇나 방식이면 #include <SDL.h> 방식으로 include해야 함.
+clang++ -Wall -std=c++17 Main.cpp $(sdl2-config --libs --cflags) -o Main
+
+# 코딩 컨벤션에 맞게 <SDL2/SDL.h> 로 사용하기 위해 -I 옵션을 수정하여 아래처럼 적용함.
+clang++ -Wall -std=c++17 Main.cpp -L/opt/homebrew/lib -lSDL2 -I/opt/homebrew/include -D_THREAD_SAFE -o Main
+
+```
+
+### full screen, fake full screen
+
+full screen은 다른 화면 전환이 번거로움. (전체 화면)
+Fake Fullscreen은 사실상 크기를 조정한 창 모드. (전체 창모드)
+
+-   SDL_WINDOW_FULLSCREEN
+    -   전체 화면. SDL이 해상도를 변경하여 전체 화면으로 만듬.
+    -   화면 전환 시 느림. (게임 하다가 ctrl + tab으로 전환하려고 하면 해상도 깨졌다가 다시 복구되는 그것.)
+-   SDL_WINDOW_FULLSCREEN_DESKTOP
+    -   fake full screen으로, 해상도 변경 없이 전체 화면처럼 보이게 함.
+    -   전체 화면을 채우는 보더리스 창을 생성하는 것과 유사.
+-   SDL_WINDOW_BORDERLESS
+    -   전체 화면과 크게 관련 없으나 전체 화면을 꽉 채우는 borderless 창을 생성하는 것과 유사.
 
 ### surface vs texture
 
