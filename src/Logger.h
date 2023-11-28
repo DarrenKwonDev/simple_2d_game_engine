@@ -15,6 +15,11 @@ struct LogEntry {
     std::string messages;
 };
 
+/*
+    예시적 구현임.
+    콘솔에 로그를 출력하는 것은 게임 엔진의 퍼포먼스에 영향을 미친다.
+    io는 무료가 아니다.
+*/
 class Logger {
 private:
 public:

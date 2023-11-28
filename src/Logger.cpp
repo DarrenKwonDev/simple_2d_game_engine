@@ -26,28 +26,28 @@ std::string CurrentDateTimeToString() {
 }
 
 void Logger::Log(const std::string& message) {
-    LogEntry logEntry;
-    logEntry.type = LOG_INFO;
-    logEntry.messages = "LOG : [" + CurrentDateTimeToString() + "] " + message;
+    // LogEntry logEntry;
+    // logEntry.type = LOG_INFO;
+    // logEntry.messages = "LOG : [" + CurrentDateTimeToString() + "] " + message;
 
-    std::cout << "\x1B[32m" << logEntry.messages << "\033[0m" << std::endl;
+    // std::cout << "\x1B[32m" << logEntry.messages << "\033[0m" << std::endl;
 
-    Logger::mMessages.push_back(logEntry);
+    // Logger::mMessages.push_back(logEntry);
 
     // do not reinvent the wheel, especially logger.
-    // spdlog::info(message);
+    spdlog::info(message);
 }
 
 void Logger::Err(const std::string& message) {
-    LogEntry logEntry;
-    logEntry.type = LOG_ERROR;
-    logEntry.messages = "ERR : [" + CurrentDateTimeToString() + "] " + message;
-    std::cout << "\x1B[91m"
-              << logEntry.messages
-              << "\033[0m" << std::endl;
+    // LogEntry logEntry;
+    // logEntry.type = LOG_ERROR;
+    // logEntry.messages = "ERR : [" + CurrentDateTimeToString() + "] " + message;
+    // std::cout << "\x1B[91m"
+    //           << logEntry.messages
+    //           << "\033[0m" << std::endl;
 
-    Logger::mMessages.push_back(logEntry);
+    // Logger::mMessages.push_back(logEntry);
 
     // do not reinvent the wheel, especially logger.
-    // spdlog::error(message);
+    spdlog::error(message);
 }
