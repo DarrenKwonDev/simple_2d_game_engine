@@ -1,24 +1,27 @@
+
+
 <!-- toc -->
 
--   [2d-game-engine-poc](#2d-game-engine-poc)
-    -   [configure](#configure)
-        -   [deps](#deps)
-        -   [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library를-pre-compiled-binary로-사용하기-vs-내장-lib로-사용하기)
-    -   [game things](#game-things)
-        -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
-        -   [Double-Buffered Renderer](#double-buffered-renderer)
-        -   [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
-        -   [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
-        -   [Determinism](#determinism)
-        -   [ECS(Entity Component System)](#ecsentity-component-system)
-            -   [component의 memory contiguous한 배치](#component의-memory-contiguous한-배치)
-    -   [SLD2](#sld2)
-        -   [paths](#paths)
-        -   [full screen, fake full screen](#full-screen-fake-full-screen)
-        -   [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
-        -   [surface vs texture](#surface-vs-texture)
-    -   [known issues](#known-issues)
-    -   [resources](#resources)
+- [2d-game-engine-poc](#2d-game-engine-poc)
+  * [configure](#configure)
+    + [deps](#deps)
+    + [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library%EB%A5%BC-pre-compiled-binary%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-vs-%EB%82%B4%EC%9E%A5-lib%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
+  * [game things](#game-things)
+    + [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-%EC%88%98%EC%A7%81-%EB%8F%99%EA%B8%B0%ED%99%94)
+    + [Double-Buffered Renderer](#double-buffered-renderer)
+    + [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
+    + [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
+    + [Determinism](#determinism)
+    + [ECS(Entity Component System)](#ecsentity-component-system)
+      - [component의 memory contiguous한 배치](#component%EC%9D%98-memory-contiguous%ED%95%9C-%EB%B0%B0%EC%B9%98)
+      - [Pool 방식의 component 관리와 memory contiguity](#pool-%EB%B0%A9%EC%8B%9D%EC%9D%98-component-%EA%B4%80%EB%A6%AC%EC%99%80-memory-contiguity)
+  * [SLD2](#sld2)
+    + [paths](#paths)
+    + [full screen, fake full screen](#full-screen-fake-full-screen)
+    + [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
+    + [surface vs texture](#surface-vs-texture)
+  * [known issues](#known-issues)
+  * [resources](#resources)
 
 <!-- tocstop -->
 
@@ -147,6 +150,16 @@ ECS에서는 컴포넌트를 사용하여 데이터를 저장합니다. 이 컴�
 -   캐시 친화적 접근: 시스템이 특정 컴포넌트 유형을 작업할 때, 연속된 메모리 레이아웃 덕분에 캐시 효율성이 높아집니다. 예를 들어, 물리 시스템이 모든 위치 컴포넌트를 순차적으로 처리할 때, 연속된 메모리 레이아웃은 캐시 적중률을 높여 성능을 향상시킵니다.
 
 -   데이터 지향 설계: ECS는 데이터 지향 설계 원칙을 따릅니다. 이는 데이터를 중심으로 시스템을 구성하여, 메모리 접근 패턴을 최적화하는 것을 목표로 합니다. 이러한 접근 방식은 메모리 연속성을 중시합니다.
+
+#### Pool 방식의 component 관리와 memory contiguity
+
+DB에서 connection 비용 아끼려고 pool 만드는 것과는 다른 것이다.
+
+ECS 시스템에서의 Pool이란 `컴포넌트를 저장, 관리하기 위한 메모리 저장 영역`을 의미한다.
+
+Pool 방식으로 관리함으로써 동일한 유형의 컴포넌트를 연속된 메모리 공간에 저장하여 memory contiguity를 달성함으로써, 메모리 할당 및 해제를 최적화하고, 캐시 효율성이 향상된다.
+
+`vector[componentId][entityId]` 꼴로 ECS의 구성 요소들을 관리하는 방식하게 된다.
 
 ## SLD2
 
