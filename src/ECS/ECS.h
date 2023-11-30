@@ -1,29 +1,90 @@
 #pragma once
 
-class Component {
+#include <bitset>
+#include <vector>
+
+const unsigned int MAX_COMPONENTS = 32;
+
+// keep track of which components an entity has
+// also, which entities a system is interested in.
+typedef std::bitset<MAX_COMPONENTS> Signature;
+
+////////////////////////////////////////////////////////
+// component. pure data
+////////////////////////////////////////////////////////
+
+struct IComponent {
+protected:
+    static int nextId;
+};
+
+template <typename T>
+class Component : public IComponent {
 private:
+    // return unique id of component
+    // T가 다를 때 마다 새로운 Component class가 될 것이다.
+    // Component<A>에 부여되는 static 변수와 Component<B> 클래스에 부여되는 static 변수는 다르다.
+    static int GetId() {
+        static auto id = nextId++;
+        return id;
+    }
+
 public:
     Component();
     virtual ~Component();
 };
 
+////////////////////////////////////////////////////////
+// Entity. just id.
+////////////////////////////////////////////////////////
 class Entity {
 private:
+    int mId;
+
 public:
-    Entity();
+    Entity(int mId);
     virtual ~Entity();
+
+    int GetId() const;
 };
 
+////////////////////////////////////////////////////////
+// mutate state in component that entities has
+////////////////////////////////////////////////////////
 class System {
 private:
+    Signature mComponentSignature;
+    std::vector<Entity> mEntities;
+
 public:
-    System();
-    virtual ~System();
+    System() = default;
+    virtual ~System() = default;
+
+    void AddEntityToSystem(Entity entity);
+    void RemoveEntityFromSystem(Entity entity);
+    std::vector<Entity> GetSystemEntities() const;
+    const Signature& GetComponentSignature() const;
+
+    template <typename TComponent>
+    void RequireComponent();
 };
 
+////////////////////////////////////////////////////////
+// mutate state in component that entities has
+////////////////////////////////////////////////////////
 class Registry {
 private:
 public:
     Registry();
     virtual ~Registry();
 };
+
+// 템플릿은 제네릭과 다르게 컴파일 시간에 인스턴스화 됨.
+// 따라서 템플릿의 구현을 별도의 .cpp 파일에 넣으면,
+// 컴파일러가 다른 소스 파일에서 해당 템플릿을 인스턴스화할 때 필요한 정보를 찾을 수 없게 됨.
+// 따라서 링크 오류가 발생함.
+template <typename TComponent>
+inline void System::RequireComponent() {
+    const auto componentId = Component<TComponent>::GetId();
+    mComponentSignature.set(componentId);
+}

@@ -6,20 +6,32 @@ Component::Component() {
 Component::~Component() {
 }
 
-Entity::Entity() {
+Entity::Entity(int id) : mId(id) {
 }
 
 Entity::~Entity() {
 }
 
-System::System() {
-}
-
-System::~System() {
+int Entity::GetId() const {
+    return this->mId;
 }
 
 Registry::Registry() {
 }
 
 Registry::~Registry() {
+}
+
+void System::AddEntityToSystem(Entity entity) {
+}
+
+void System::RemoveEntityFromSystem(Entity entity) {
+}
+
+std::vector<Entity> System::GetSystemEntities() const {
+    return std::vector<Entity>();
+}
+
+const Signature& System::GetComponentSignature() const {
+    // TODO: insert return statement here
 }
