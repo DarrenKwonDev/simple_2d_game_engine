@@ -25,8 +25,8 @@ private:
     // T가 다를 때 마다 새로운 Component class가 될 것이다.
     // Component<A>에 부여되는 static 변수와 Component<B> 클래스에 부여되는 static 변수는 다르다.
     static int GetId() {
-        static auto id = nextId++;
-        return id;
+        static auto mId = nextId++;
+        return mId;
     }
 
 public:
@@ -44,6 +44,22 @@ private:
 public:
     Entity(int mId);
     virtual ~Entity();
+
+    Entity(const Entity& rhs) = default;        // 복사 생성
+    Entity& operator=(const Entity&) = default; // 복사 대입 연산
+
+    bool operator==(const Entity& rhs) const {
+        return mId == rhs.mId;
+    };
+    bool operator!=(const Entity& rhs) const {
+        return mId != rhs.mId;
+    };
+    bool operator>(const Entity& rhs) const {
+        return mId > rhs.mId;
+    };
+    bool operator<(const Entity& rhs) const {
+        return mId < rhs.mId;
+    };
 
     int GetId() const;
 };

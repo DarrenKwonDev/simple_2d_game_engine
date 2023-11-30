@@ -15,15 +15,19 @@ CXX_STD_WARNINGS = -std=$(CXX_STANDARD) $(CXX_WARNINGS)
 
 # Linker Flags, Libraries (ld = linker)
 LDFLAGS = -L/opt/homebrew/lib 
-LDLIBS = -lSDL2 \
+LDLIBS = \
+	-lSDL2 \
 	-lSDL2_image \
 	-lSDL2_ttf \
 	-lSDL2_mixer \
 	-llua5.4 \
 	-lspdlog \
 	-lfmt
-INCLUDE_PATHS = -I"./libs/" \
-	-I/opt/homebrew/include
+INCLUDE_PATHS = \
+	-I/opt/homebrew/include\
+	-I"./libs/"\
+	-I"./src/"\
+
 
 CXX_COMPILER_CALL = $(CXX) $(CXX_STD_WARNINGS) \
 	$(SRCS) \

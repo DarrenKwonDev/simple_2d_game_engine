@@ -134,6 +134,7 @@ OOP와 ECS의 가장 큰 차이점은, OOP에서는 base class와 derived class�
 
     -   pure data
     -   pure data라는 관점에서 plain old data(POD)를 표현하기 위한 struct로 구현하는게 잘 어울린다. 그 과정에서 memory padding을 고려하는 것이 좋다. (#pragma pack을 활용하거나 수동으로 구조체 멤버의 순서를 조정하자.)
+    -   그러나 여러 기능 때문에 class로 구현이 되곤 한다.
     -   컴포넌트는 엔티티의 데이터를 나타냅니다. 예를 들어, 위치, 속도, 건강 상태 등과 같은 속성들이 컴포넌트로 표현됩니다. 이들은 엔티티에 첨부되어 엔티티의 상태를 정의합니다.
 
 -   System(transform data logic)
