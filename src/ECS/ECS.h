@@ -98,12 +98,67 @@ inline void System::RequireComponent() {
 };
 
 ////////////////////////////////////////////////////////
+// Pool
+// Pool is a vector of object of type T.
+// use vector for memory contiguity
+// vector의 wrapper기 때문에 가급적 vector의 기본 메서드를 변화시키지 않는 것이 좋다.
+////////////////////////////////////////////////////////
+
+// IPool을 사용함으로써 Pool 객체들을 그들의 구체적인 유형(T)에 관계없이 다룰 수 있게 됨.
+// Pool을 제네릭으로 받아야 하는 경우에 유용함.
+// 예를 들어, std::vector<IPool*> componentPools; 와 같은 경우.
+struct IPool {
+public:
+    virtual ~IPool(){};
+};
+
+template <typename T>
+class Pool : public IPool {
+private:
+    std::vector<T> data;
+
+public:
+    Pool(int size = 100) {
+        data.resize(size);
+    };
+    virtual ~Pool() = default;
+
+    T& operator[](unsigned int index) {
+        return data[index];
+    }
+
+    bool isEmpty() const {
+        return data.empty();
+    }
+    int GetSize() const {
+        return data.size();
+    }
+    void Resize(int n) {
+        data.resize(n);
+    }
+    void Clear() {
+        data.clear();
+    }
+    void Add(const T object) {
+        data.push_back(object);
+    }
+    void Set(int index, const T object) {
+        data[index] = object;
+    }
+    T& Get(int index) {
+        return static_cast<T&>(data[index]);
+    }
+};
+
+////////////////////////////////////////////////////////
 // registry
 // 흔히 singleton으로 구현되는 game manager
 ////////////////////////////////////////////////////////
 class Registry {
 private:
     unsigned int mNumEntities = 0;
+
+    std::vector<IPool*> componentPools;
 
 public:
     Registry();
