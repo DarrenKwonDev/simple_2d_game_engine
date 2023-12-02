@@ -1,27 +1,25 @@
-
-
 <!-- toc -->
 
-- [2d-game-engine-poc](#2d-game-engine-poc)
-  * [configure](#configure)
-    + [deps](#deps)
-    + [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library%EB%A5%BC-pre-compiled-binary%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-vs-%EB%82%B4%EC%9E%A5-lib%EB%A1%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
-  * [game things](#game-things)
-    + [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-%EC%88%98%EC%A7%81-%EB%8F%99%EA%B8%B0%ED%99%94)
-    + [Double-Buffered Renderer](#double-buffered-renderer)
-    + [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
-    + [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
-    + [Determinism](#determinism)
-    + [ECS(Entity Component System)](#ecsentity-component-system)
-      - [component의 memory contiguous한 배치](#component%EC%9D%98-memory-contiguous%ED%95%9C-%EB%B0%B0%EC%B9%98)
-      - [Pool 방식의 component 관리와 memory contiguity](#pool-%EB%B0%A9%EC%8B%9D%EC%9D%98-component-%EA%B4%80%EB%A6%AC%EC%99%80-memory-contiguity)
-  * [SLD2](#sld2)
-    + [paths](#paths)
-    + [full screen, fake full screen](#full-screen-fake-full-screen)
-    + [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
-    + [surface vs texture](#surface-vs-texture)
-  * [known issues](#known-issues)
-  * [resources](#resources)
+-   [2d-game-engine-poc](#2d-game-engine-poc)
+    -   [configure](#configure)
+        -   [deps](#deps)
+        -   [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library를-pre-compiled-binary로-사용하기-vs-내장-lib로-사용하기)
+    -   [game things](#game-things)
+        -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
+        -   [Double-Buffered Renderer](#double-buffered-renderer)
+        -   [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
+        -   [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
+        -   [Determinism](#determinism)
+        -   [ECS(Entity Component System)](#ecsentity-component-system)
+            -   [component의 memory contiguous한 배치](#component의-memory-contiguous한-배치)
+            -   [Pool 방식의 component 관리와 memory contiguity](#pool-방식의-component-관리와-memory-contiguity)
+    -   [SLD2](#sld2)
+        -   [paths](#paths)
+        -   [full screen, fake full screen](#full-screen-fake-full-screen)
+        -   [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
+        -   [surface vs texture](#surface-vs-texture)
+    -   [known issues](#known-issues)
+    -   [resources](#resources)
 
 <!-- tocstop -->
 
@@ -159,7 +157,7 @@ ECS 시스템에서의 Pool이란 `컴포넌트를 저장, 관리하기 위한 �
 
 Pool 방식으로 관리함으로써 동일한 유형의 컴포넌트를 연속된 메모리 공간에 저장하여 memory contiguity를 달성함으로써, 메모리 할당 및 해제를 최적화하고, 캐시 효율성이 향상된다.
 
-`vector[componentId][entityId]` 꼴로 ECS의 구성 요소들을 관리하는 방식하게 된다.
+componentPool을 작성한다고 가정한다면, `vector[componentId][entityId]` 꼴로 ECS의 구성 요소들을 관리하는 방식하게 된다.
 
 ## SLD2
 

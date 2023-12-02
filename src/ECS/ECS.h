@@ -70,7 +70,7 @@ public:
 
 ////////////////////////////////////////////////////////
 // system
-// mutate state in component that entities has
+// 특정 컴포넌트를 가진 엔티티들을 처리
 ////////////////////////////////////////////////////////
 class System {
 private:
@@ -169,7 +169,7 @@ private:
     std::set<Entity> mEntitiesToBeAdded;
     std::set<Entity> mEntitiesToBeKilled;
 
-    std::vector<IPool*> mComponentPools;               // vector[componentId][entityId]
+    std::vector<IPool*> mComponentPools;               // vector of component pool. vector<vector[componentId][entityId]> 꼴
     std::vector<Signature> mEntityComponentSignatures; // vector of component signature per entity.
     std::unordered_map<std::type_index, System*> mSystems;
 
@@ -182,15 +182,19 @@ public:
     Entity CreateEntity();
     void KillEntity();
 
+    // entity에 특정 component를 추가합니다.
     template <typename T, typename... TArgs>
     void AddComponent(Entity entity, TArgs&&... args);
 
+    // entity에 특정 component를 삭제합니다
     template <typename T>
     void RemoveComponent(Entity entity);
 
+    // entity에 특정 component가 존재하는지 확인합니다.
     template <typename T>
     bool HasComponent(Entity entity) const;
 
+    // entity의 component를 확인합니다.
     template <typename T>
     T& GetComponent(Entity entity) const;
 
@@ -201,8 +205,40 @@ public:
     void GetSystem();
 };
 
+// component pool에 없다면 component를 추가하고,
+// 새로운 component를 생성한 뒤,
+// Pool.data[entityId] = newComponent 할당을 한다.
 template <typename T, typename... TArgs>
 inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
+    const auto componentId = Component<T>::GetId();
+    const auto entityId = entity.GetId();
+
+    if (componentId >= mComponentPools.size()) {
+        // 포인터를 담고 있으므로 nullptr 초기화 필요.
+        mComponentPools.resize(componentId + 1, nullptr);
+    }
+
+    if (!mComponentPools[componentId]) {
+        Pool<T>* newComponentPool = new Pool<T>();
+        mComponentPools[componentId] = newComponentPool;
+    }
+
+    // componentPool은 entity id를 들고 있는 vector의 wrapper
+    Pool<T>* componentPool = Pool<T>(mComponentPools[componentId]);
+
+    if (entityId >= componentPool->GetSize()) {
+        componentPool->Resize(mNumEntities);
+    }
+
+    // std::forward
+    // https://en.cppreference.com/w/cpp/utility/forward
+    // forward args to create new component
+    // Poo.data[entityId] = newComponent;
+    T newComponent(std::forward<TArgs>(args)...);
+    componentPool->Set(entityId, newComponent);
+
+    // entity의 signature에 특정 componentId에 해당하는 bit를 올려준다.
+    mEntityComponentSignatures[entityId].set(componentId);
 }
 
 template <typename T>
