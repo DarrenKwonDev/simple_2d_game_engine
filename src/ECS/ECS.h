@@ -195,16 +195,16 @@ public:
     void AddComponent(Entity entity, TArgs&&... args);
 
     // entity에 특정 component를 삭제합니다
-    template <typename T>
+    template <typename TComponent>
     void RemoveComponent(Entity entity);
 
     // entity에 특정 component가 존재하는지 확인합니다.
-    template <typename T>
+    template <typename TComponent>
     bool HasComponent(Entity entity) const;
 
     // entity의 component를 확인합니다.
-    template <typename T>
-    T& GetComponent(Entity entity) const;
+    // template <typename TComponent>
+    // TComponent& GetComponent(Entity entity) const;
 
     // 시스템을 추가, 삭제, 조회 등.
     void AddSystem();
@@ -248,16 +248,21 @@ inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
     mEntityComponentSignatures[entityId].set(componentId);
 }
 
-template <typename T>
+// entity에 특정 component를 삭제합니다
+template <typename TComponent>
 inline void Registry::RemoveComponent(Entity entity) {
+    const auto componentId = Component<TComponent>::GetId();
+    const auto entityId = entity.GetId();
+
+    mEntityComponentSignatures[entityId].set(componentId, false);
 }
 
-template <typename T>
+// entity에 특정 component가 있는지 확인한다.
+template <typename TComponent>
 inline bool Registry::HasComponent(Entity entity) const {
-    return false;
-}
 
-template <typename T>
-inline T& Registry::GetComponent(Entity entity) const {
-    // TODO: insert return statement here
+    const auto componentId = Component<TComponent>::GetId();
+    const auto entityId = entity.GetId();
+
+    return mEntityComponentSignatures[entityId].test(componentId);
 }
