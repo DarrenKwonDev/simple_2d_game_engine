@@ -169,8 +169,16 @@ private:
     std::set<Entity> mEntitiesToBeAdded;
     std::set<Entity> mEntitiesToBeKilled;
 
-    std::vector<IPool*> mComponentPools;               // vector of component pool. vector<vector[componentId][entityId]> 꼴
+    // vector of component pool.
+    // vector<vector[componentId][entityId]>
+    // 특정 component를 가진 entity를 찾을 수 있다.
+    std::vector<IPool*> mComponentPools;
+
+    // mEntityComponentSignatures[entityId] = componentSignature
+    // 특정 entity가 포함된 component를 찾을 수 있다.
     std::vector<Signature> mEntityComponentSignatures; // vector of component signature per entity.
+
+    // 각 시스템의 목록.
     std::unordered_map<std::type_index, System*> mSystems;
 
 public:
