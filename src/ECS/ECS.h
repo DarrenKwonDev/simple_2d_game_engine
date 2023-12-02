@@ -191,7 +191,7 @@ public:
     void KillEntity();
 
     // entity에 특정 component를 추가합니다.
-    template <typename T, typename... TArgs>
+    template <typename TComponent, typename... TArgs>
     void AddComponent(Entity entity, TArgs&&... args);
 
     // entity에 특정 component를 삭제합니다
@@ -216,9 +216,9 @@ public:
 // component pool에 없다면 component를 추가하고,
 // 새로운 component를 생성한 뒤,
 // Pool.data[entityId] = newComponent 할당을 한다.
-template <typename T, typename... TArgs>
+template <typename TComponent, typename... TArgs>
 inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
-    const auto componentId = Component<T>::GetId();
+    const auto componentId = Component<TComponent>::GetId();
     const auto entityId = entity.GetId();
 
     if (componentId >= mComponentPools.size()) {
@@ -227,12 +227,11 @@ inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
     }
 
     if (!mComponentPools[componentId]) {
-        Pool<T>* newComponentPool = new Pool<T>();
+        Pool<TComponent>* newComponentPool = new Pool<TComponent>();
         mComponentPools[componentId] = newComponentPool;
     }
 
-    // componentPool은 entity id를 들고 있는 vector의 wrapper
-    Pool<T>* componentPool = Pool<T>(mComponentPools[componentId]);
+    Pool<TComponent>* componentPool = Pool<TComponent>(mComponentPools[componentId]);
 
     if (entityId >= componentPool->GetSize()) {
         componentPool->Resize(mNumEntities);
@@ -241,8 +240,8 @@ inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
     // std::forward
     // https://en.cppreference.com/w/cpp/utility/forward
     // forward args to create new component
+    TComponent newComponent(std::forward<TArgs>(args)...);
     // Poo.data[entityId] = newComponent;
-    T newComponent(std::forward<TArgs>(args)...);
     componentPool->Set(entityId, newComponent);
 
     // entity의 signature에 특정 componentId에 해당하는 bit를 올려준다.

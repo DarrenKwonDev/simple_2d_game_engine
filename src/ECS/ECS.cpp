@@ -21,12 +21,6 @@ int Entity::GetId() const {
 // registry
 ////////////////////////////////////////////////////////
 
-Registry::Registry() {
-}
-
-Registry::~Registry() {
-}
-
 void Registry::Update() {
 }
 
