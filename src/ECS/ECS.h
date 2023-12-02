@@ -179,7 +179,7 @@ private:
     std::vector<Signature> mEntityComponentSignatures; // vector of component signature per entity.
 
     // 각 시스템의 목록.
-    std::unordered_map<std::type_index, System*> mSystems;
+    std::unordered_map<std::type_index, System*> mSystemsMap;
 
 public:
     Registry() = default;
@@ -207,10 +207,20 @@ public:
     // TComponent& GetComponent(Entity entity) const;
 
     // 시스템을 추가, 삭제, 조회 등.
-    void AddSystem();
+    template <typename TSystem, typename... TArgs>
+    void AddSystem(TArgs&&... args);
+
+    template <typename TSystem>
     void RemoveSystem();
-    void HasSystem();
-    void GetSystem();
+
+    template <typename TSystem>
+    bool HasSystem() const;
+
+    template <typename TSystem>
+    TSystem& GetSystem();
+
+    // check signature and add entity to system
+    void AddEntityToSystems(Entity entity);
 };
 
 // component pool에 없다면 component를 추가하고,
@@ -260,9 +270,36 @@ inline void Registry::RemoveComponent(Entity entity) {
 // entity에 특정 component가 있는지 확인한다.
 template <typename TComponent>
 inline bool Registry::HasComponent(Entity entity) const {
-
     const auto componentId = Component<TComponent>::GetId();
     const auto entityId = entity.GetId();
 
     return mEntityComponentSignatures[entityId].test(componentId);
+}
+
+template <typename TSystem, typename... TArgs>
+inline void Registry::AddSystem(TArgs&&... args) {
+    TSystem* newSystem(new TSystem(std::forward<TArgs>(args)...));
+    // typeid
+    // https://en.cppreference.com/w/cpp/language/typeid
+    // typeid는 런타임에 객체의 타입 정보를 얻어오는데 사용 됩니다.
+    // 동적 바인딩처럼, 실제 타입에 대한 정보를 반환합니다.
+    mSystemsMap.insert(
+        std::make_pair(std::type_index(typeid(TSystem)), newSystem));
+}
+
+template <typename TSystem>
+inline void Registry::RemoveSystem() {
+    auto system = mSystemsMap.find(std::type_index(typeid(TSystem)));
+    mSystemsMap.erase(system);
+}
+
+template <typename TSystem>
+inline bool Registry::HasSystem() const {
+    return mSystemsMap.find(std::type_index(typeid(TSystem))) != mSystemsMap.end();
+}
+
+template <typename TSystem>
+inline TSystem& Registry::GetSystem() {
+    auto system = mSystemsMap.find(std::type_index(typeid(TSystem)));
+    return *(std::static_pointer_cast<TSystem>(system->second));
 }
