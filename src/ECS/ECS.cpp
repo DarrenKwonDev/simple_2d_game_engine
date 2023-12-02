@@ -1,6 +1,7 @@
-#include "ECS.h"
-
 #include <algorithm>
+
+#include "../Logger/Logger.h"
+#include "ECS.h"
 
 ////////////////////////////////////////////////////////
 // entity
@@ -24,6 +25,25 @@ Registry::Registry() {
 }
 
 Registry::~Registry() {
+}
+
+void Registry::Update() {
+}
+
+Entity Registry::CreateEntity() {
+    int entityId = mNumEntities++;
+    if (entityId >= mEntityComponentSignatures.size()) {
+        // 비록 vector를 사용했지만, 인덱스 기반 접근의 안전성을 위해서 수동 resize.
+        // (vector[idx]) 꼴의 접근은 vector의 cap을 증가시키지 않음.
+        mEntityComponentSignatures.resize(entityId + 1);
+    }
+
+    Entity entity(entityId);
+    mEntitiesToBeAdded.insert(entity);
+
+    Logger::Log("Entity created, id: " + std::to_string(entityId));
+
+    return entity;
 }
 
 ////////////////////////////////////////////////////////

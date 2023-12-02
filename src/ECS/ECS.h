@@ -1,6 +1,9 @@
 #pragma once
 
 #include <bitset>
+#include <set>
+#include <typeindex>
+#include <unordered_map>
 #include <vector>
 
 const unsigned int MAX_COMPONENTS = 32;
@@ -71,7 +74,10 @@ public:
 ////////////////////////////////////////////////////////
 class System {
 private:
+    // 시스템이 작업을 수행하는데 필요한 컴포넌트를 정의함.
+    // 예를 들어, render system은 position comp, graphic comp가 필요함.
     Signature mComponentSignature;
+
     std::vector<Entity> mEntities;
 
 public:
@@ -156,18 +162,59 @@ public:
 ////////////////////////////////////////////////////////
 class Registry {
 private:
-    unsigned int mNumEntities = 0;
+    int mNumEntities = 0;
 
-    std::vector<IPool*> componentPools;
+    // 다음 tick의 Registry.Update를 타고 가도록 설정해놓는 일종의 buffer 역할
+    // Update 도중 이러한 작업들이 일어나면 로직이 망가질 것이다.
+    std::set<Entity> mEntitiesToBeAdded;
+    std::set<Entity> mEntitiesToBeKilled;
+
+    std::vector<IPool*> mComponentPools;               // vector[componentId][entityId]
+    std::vector<Signature> mEntityComponentSignatures; // vector of component signature per entity.
+    std::unordered_map<std::type_index, System*> mSystems;
 
 public:
-    Registry();
+    Registry() = default;
     virtual ~Registry();
+
+    void Update();
 
     Entity CreateEntity();
     void KillEntity();
-    void AddComponent();
-    void RemoveComponent();
+
+    template <typename T, typename... TArgs>
+    void AddComponent(Entity entity, TArgs&&... args);
+
+    template <typename T>
+    void RemoveComponent(Entity entity);
+
+    template <typename T>
+    bool HasComponent(Entity entity) const;
+
+    template <typename T>
+    T& GetComponent(Entity entity) const;
+
+    // 시스템을 추가, 삭제, 조회 등.
     void AddSystem();
     void RemoveSystem();
+    void HasSystem();
+    void GetSystem();
 };
+
+template <typename T, typename... TArgs>
+inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
+}
+
+template <typename T>
+inline void Registry::RemoveComponent(Entity entity) {
+}
+
+template <typename T>
+inline bool Registry::HasComponent(Entity entity) const {
+    return false;
+}
+
+template <typename T>
+inline T& Registry::GetComponent(Entity entity) const {
+    // TODO: insert return statement here
+}
