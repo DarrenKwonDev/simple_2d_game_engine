@@ -172,14 +172,14 @@ private:
     // vector of component pool.
     // vector<vector[componentId][entityId]>
     // 특정 component를 가진 entity를 찾을 수 있다.
-    std::vector<IPool*> mComponentPools;
+    std::vector<std::shared_ptr<IPool>> mComponentPools;
 
     // mEntityComponentSignatures[entityId] = componentSignature
     // 특정 entity가 포함된 component를 찾을 수 있다.
     std::vector<Signature> mEntityComponentSignatures; // vector of component signature per entity.
 
     // 각 시스템의 목록.
-    std::unordered_map<std::type_index, System*> mSystemsMap;
+    std::unordered_map<std::type_index, std::shared_ptr<System>> mSystemsMap;
 
 public:
     Registry();
@@ -237,11 +237,11 @@ inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
     }
 
     if (!mComponentPools[componentId]) {
-        Pool<TComponent>* newComponentPool = new Pool<TComponent>();
+        std::shared_ptr<Pool<TComponent>> newComponentPool = std::make_shared<Pool<TComponent>>();
         mComponentPools[componentId] = newComponentPool;
     }
 
-    Pool<TComponent>* componentPool = Pool<TComponent>(mComponentPools[componentId]);
+    std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(mComponentPools[componentId]);
 
     if (entityId >= componentPool->GetSize()) {
         componentPool->Resize(mNumEntities);
@@ -278,7 +278,8 @@ inline bool Registry::HasComponent(Entity entity) const {
 
 template <typename TSystem, typename... TArgs>
 inline void Registry::AddSystem(TArgs&&... args) {
-    TSystem* newSystem(new TSystem(std::forward<TArgs>(args)...));
+    std::shared_ptr<TSystem> newSystem = std::make_shared<TSystem>(std::forward<TArgs>(args)...);
+
     // typeid
     // https://en.cppreference.com/w/cpp/language/typeid
     // typeid는 런타임에 객체의 타입 정보를 얻어오는데 사용 됩니다.
