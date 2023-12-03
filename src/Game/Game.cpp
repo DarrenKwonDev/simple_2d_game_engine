@@ -6,6 +6,8 @@
 
 #include "glm/glm.hpp"
 
+#include "../Components/RigidBodyComponent.h"
+#include "../Components/TransformComponent.h"
 #include "../ECS/ECS.h"
 #include "../Logger/Logger.h"
 #include "Game.h"
@@ -99,13 +101,10 @@ void Game::ProcessInput() {
 // one time setup
 void Game::Setup() {
 
-    // TODO: entity tank
     Entity tank = mRegistry->CreateEntity();
-    Entity truck = mRegistry->CreateEntity();
 
-    // tank.AddComponent<TransformComponent>();
-    // tank.AddComponent<BoxColliderComponent>();
-    // tank.AddComponent<SpriteComponent>("./assets/images/tank.png");
+    mRegistry->AddComponent<TransformComponent>(tank, glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+    mRegistry->AddComponent<RigidBodyComponent>(tank, glm::vec2(50.0, 0.0));
 }
 
 // called every frame

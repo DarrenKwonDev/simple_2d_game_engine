@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "../Logger/Logger.h"
+
 const unsigned int MAX_COMPONENTS = 32;
 
 // keep track of which components an entity has
@@ -24,7 +26,10 @@ protected:
 
 template <typename T>
 class Component : public IComponent {
-private:
+public:
+    Component();
+    virtual ~Component();
+
     // return unique id of component
     // T가 다를 때 마다 새로운 Component class가 될 것이다.
     // Component<A>에 부여되는 static 변수와 Component<B> 클래스에 부여되는 static 변수는 다르다.
@@ -32,10 +37,6 @@ private:
         static auto mId = nextId++;
         return mId;
     }
-
-public:
-    Component();
-    virtual ~Component();
 };
 
 ////////////////////////////////////////////////////////
@@ -256,6 +257,12 @@ inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
 
     // entity의 signature에 특정 componentId에 해당하는 bit를 올려준다.
     mEntityComponentSignatures[entityId].set(componentId);
+
+    Logger::Log(
+        "component id: " +
+        std::to_string(componentId) +
+        " was added to entity id : " +
+        std::to_string(entityId));
 }
 
 // entity에 특정 component를 삭제합니다

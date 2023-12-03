@@ -60,7 +60,7 @@ Entity Registry::CreateEntity() {
 
     Logger::Log("Entity created, id: " + std::to_string(entityId));
 
-    return Entity(3);
+    return entity;
 }
 
 void Registry::AddEntityToSystems(Entity entity) {
