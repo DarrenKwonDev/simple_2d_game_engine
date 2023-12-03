@@ -41,6 +41,7 @@ public:
 
 ////////////////////////////////////////////////////////
 // Entity. just id.
+// entity 객체는 component를 소유하지 않고 있다 (entity-component 관계는 모두 pool에서 관리됨.)
 ////////////////////////////////////////////////////////
 class Entity {
 private:
@@ -49,6 +50,23 @@ private:
 public:
     Entity(int mId);
     virtual ~Entity();
+
+    int GetId() const;
+
+    // 후방에 선언된 Registry를 전방선언하지 않고도 'class' 선언만으로도 대체 가능.
+    class Registry* mRegistry;
+
+    template <typename TComponent, typename... TArgs>
+    void AddComponent(TArgs&&... args);
+
+    template <typename TComponent>
+    void RemoveComponent();
+
+    template <typename TComponent>
+    bool HasComponent() const;
+
+    template <typename TComponent>
+    TComponent& GetComponent() const;
 
     Entity(const Entity& rhs) = default;        // 복사 생성
     Entity& operator=(const Entity&) = default; // 복사 대입 연산
@@ -65,8 +83,6 @@ public:
     bool operator<(const Entity& rhs) const {
         return mId < rhs.mId;
     };
-
-    int GetId() const;
 };
 
 ////////////////////////////////////////////////////////
@@ -159,7 +175,8 @@ public:
 
 ////////////////////////////////////////////////////////
 // registry
-// 흔히 singleton으로 구현되는 game manager
+// 흔히 singleton으로 구현되는 game manager.
+// ECS 시스템 간의 동작을 정의함.
 ////////////////////////////////////////////////////////
 class Registry {
 private:
@@ -170,9 +187,23 @@ private:
     std::set<Entity> mEntitiesToBeAdded;
     std::set<Entity> mEntitiesToBeKilled;
 
-    // vector of component pool.
-    // vector<vector[componentId][entityId]>
-    // 특정 component를 가진 entity를 찾을 수 있다.
+    /*
+        vector of component pool.
+
+        vector<vector<Component>> 의 꼴.
+
+        [ Pool<Component0>, Pool<Component1>, Pool<Component2>, Pool<Component3] ]
+
+        Pool<Component0> (for Comp0):
+        [ Component0, Component0, Component0, ... ]
+        index는 entityId에 해당.
+
+        따라서, mComponentPools[componentId] 는 componentId에 해당하는 컴포넌트의 배열이며,
+        mComponentPools[componentId]의 index는 entityId를 가리킴.
+
+        결과적으로,
+        (entity의 갯수, component의 갯수)의 이차원 배열이 형성된다.
+    */
     std::vector<std::shared_ptr<IPool>> mComponentPools;
 
     // mEntityComponentSignatures[entityId] = componentSignature
@@ -204,8 +235,8 @@ public:
     bool HasComponent(Entity entity) const;
 
     // entity의 component를 확인합니다.
-    // template <typename TComponent>
-    // TComponent& GetComponent(Entity entity) const;
+    template <typename TComponent>
+    TComponent& GetComponent(Entity entity) const;
 
     // 시스템을 추가, 삭제, 조회 등.
     template <typename TSystem, typename... TArgs>
@@ -224,26 +255,28 @@ public:
     void AddEntityToSystems(Entity entity);
 };
 
-// component pool에 없다면 component를 추가하고,
-// 새로운 component를 생성한 뒤,
-// Pool.data[entityId] = newComponent 할당을 한다.
 template <typename TComponent, typename... TArgs>
 inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
     const auto componentId = Component<TComponent>::GetId();
     const auto entityId = entity.GetId();
 
     if (componentId >= mComponentPools.size()) {
-        // 포인터를 담고 있으므로 nullptr 초기화 필요.
+        // 포인터를 담고 있으므로 nullptr 초기화 필요
         mComponentPools.resize(componentId + 1, nullptr);
     }
 
+    // 만약 새로 생성된 컴포넌트라면.
     if (!mComponentPools[componentId]) {
+
+        // newComponentPool은 vector<Component> 꼴.
         std::shared_ptr<Pool<TComponent>> newComponentPool = std::make_shared<Pool<TComponent>>();
+
         mComponentPools[componentId] = newComponentPool;
     }
 
     std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(mComponentPools[componentId]);
 
+    // (entity count, component count) 이차원 행렬을 위해서.
     if (entityId >= componentPool->GetSize()) {
         componentPool->Resize(mNumEntities);
     }
@@ -271,6 +304,8 @@ inline void Registry::RemoveComponent(Entity entity) {
     const auto componentId = Component<TComponent>::GetId();
     const auto entityId = entity.GetId();
 
+    // entity 객체는 component를 소유하지 않고 있다 (entity-component 관계는 모두 pool에서 관리됨.)
+    // 따라서, signature에 특정 비트 위치만 꺼주면 됨.
     mEntityComponentSignatures[entityId].set(componentId, false);
 }
 
@@ -281,6 +316,19 @@ inline bool Registry::HasComponent(Entity entity) const {
     const auto entityId = entity.GetId();
 
     return mEntityComponentSignatures[entityId].test(componentId);
+}
+
+// entity가 소유한 특정 component(TComponent) 찾기
+template <typename TComponent>
+inline TComponent& Registry::GetComponent(Entity entity) const {
+    const auto componentId = Component<TComponent>::GetId();
+    const auto entityId = entity.GetId();
+
+    // vector<Component>, index는 entityId.
+    // [Component, Component, ...]
+    auto componentPool = std::static_pointer_cast<Pool<TComponent>>(mComponentPools[componentId]);
+
+    return componentPool->Get(entityId);
 }
 
 template <typename TSystem, typename... TArgs>

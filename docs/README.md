@@ -11,8 +11,7 @@
         -   [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
         -   [Determinism](#determinism)
         -   [ECS(Entity Component System)](#ecsentity-component-system)
-            -   [component의 memory contiguous한 배치](#component의-memory-contiguous한-배치)
-            -   [Pool 방식의 component 관리와 memory contiguity](#pool-방식의-component-관리와-memory-contiguity)
+            -   [component의 memory contiguous한 배치와 Pool](#component의-memory-contiguous한-배치와-pool)
     -   [SLD2](#sld2)
         -   [paths](#paths)
         -   [full screen, fake full screen](#full-screen-fake-full-screen)
@@ -142,25 +141,32 @@ OOP와 ECS의 가장 큰 차이점은, OOP에서는 base class와 derived class�
 -   System(transform data logic)
     -   entity는 id, component는 data, system은 behavior를 담당한다. 즉, component의 상태 데이터를 변경하는 것이 system의 역할이다.
 
-#### component의 memory contiguous한 배치
+#### component의 memory contiguous한 배치와 Pool
 
 ECS에서는 컴포넌트를 사용하여 데이터를 저장합니다. 이 컴포넌트들은 종종 메모리 상에서 연속적으로 배치됩니다. 즉, memory contiguity (메모리 연속성)를 지키도록 배치됩니다.
+
+쉽게 말해서 [comp, comp, comp, comp, ...] 와 같은 꼴입니다.
 
 -   캐시 친화적 접근: 시스템이 특정 컴포넌트 유형을 작업할 때, 연속된 메모리 레이아웃 덕분에 캐시 효율성이 높아집니다. 예를 들어, 물리 시스템이 모든 위치 컴포넌트를 순차적으로 처리할 때, 연속된 메모리 레이아웃은 캐시 적중률을 높여 성능을 향상시킵니다.
 
 -   데이터 지향 설계: ECS는 데이터 지향 설계 원칙을 따릅니다. 이는 데이터를 중심으로 시스템을 구성하여, 메모리 접근 패턴을 최적화하는 것을 목표로 합니다. 이러한 접근 방식은 메모리 연속성을 중시합니다.
 
-생각해보면, memory contiguous한 자료구조(vector, array, ...)에 객체를 넣기만 하면 이를 달성할 수 있을 것으로 보인다. 이의 구현체를 관습적으로 `Pool`이라고 부른다.
-
-#### Pool 방식의 component 관리와 memory contiguity
-
-DB에서 connection 비용 아끼려고 pool 만드는 것과는 다른 것이다.
+생각해보면, memory contiguous한 자료구조(vector, array, ...)에 객체를 넣기만 하면 이를 달성할 수 있을 것으로 보인다. 이의 구현체를 관습적으로 `Pool`이라고 부른다. (DB에서 connection 비용 아끼려고 만드는 pool과는 맥락이 다르니 용어에 주의합시다.)
 
 ECS 시스템에서의 Pool이란 `컴포넌트를 저장, 관리하기 위한 메모리 저장 영역`을 의미한다.
 
 Pool 방식으로 관리함으로써 동일한 유형의 컴포넌트를 연속된 메모리 공간에 저장하여 memory contiguity를 달성함으로써, 메모리 할당 및 해제를 최적화하고, 캐시 효율성이 향상된다.
 
 Pool의 구현은 단순히 memory contiguous한 자료구조(vector, array, ...)에 객체 혹은 식별자를 넣은 것에 불과하다.
+
+해당 엔진에서의 Pool은 아래와 같이 구성된다.
+
+| Entity / Component | CompA | CompB | CompC |
+| ------------------ | ----- | ----- | ----- |
+| Entity 0           | CompA | CompB |       |
+| Entity 1           | CompA |       | CompC |
+| Entity 2           | CompA | CompB |       |
+| Entity 3           | CompA | CompB | CompC |
 
 ## SLD2
 

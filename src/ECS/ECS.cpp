@@ -55,6 +55,7 @@ Entity Registry::CreateEntity() {
     }
 
     Entity entity(entityId);
+    entity.mRegistry = this;
 
     mEntitiesToBeAdded.insert(entity);
 
