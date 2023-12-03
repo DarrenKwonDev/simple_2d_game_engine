@@ -57,6 +57,7 @@ public:
     // circular deps 문제를 일으킬 가능성이 있으니 조심하자.
     class Registry* mRegistry;
 
+    // args에 무엇을 정의하는가에 따라 TArgs가 컴파일타임에 결정된다.
     template <typename TComponent, typename... TArgs>
     void AddComponent(TArgs&&... args);
 
@@ -94,7 +95,7 @@ class System {
 private:
     // 시스템이 작업을 수행하는데 필요한 컴포넌트를 정의함.
     // 예를 들어, render system은 position comp, graphic comp가 필요함.
-    Signature mComponentSignature;
+    Signature mSysRequiredComponentSignature;
 
     std::vector<Entity> mEntities;
 
@@ -111,14 +112,10 @@ public:
     void RequireComponent();
 };
 
-// 템플릿은 제네릭과 다르게 컴파일 시간에 인스턴스화 됨.
-// 따라서 템플릿의 구현을 별도의 .cpp 파일에 넣으면,
-// 컴파일러가 다른 소스 파일에서 해당 템플릿을 인스턴스화할 때 필요한 정보를 찾을 수 없게 됨.
-// 따라서 링크 오류가 발생함.
 template <typename TComponent>
 inline void System::RequireComponent() {
     const auto componentId = Component<TComponent>::GetId();
-    mComponentSignature.set(componentId);
+    mSysRequiredComponentSignature.set(componentId);
 };
 
 ////////////////////////////////////////////////////////
@@ -220,6 +217,9 @@ public:
 
     void Update();
 
+    /////////////////////////
+    // entity
+    /////////////////////////
     Entity CreateEntity();
     void KillEntity();
 
@@ -239,6 +239,10 @@ public:
     template <typename TComponent>
     TComponent& GetComponent(Entity entity) const;
 
+    /////////////////////////
+    // system
+    /////////////////////////
+
     // 시스템을 추가, 삭제, 조회 등.
     template <typename TSystem, typename... TArgs>
     void AddSystem(TArgs&&... args);
@@ -255,6 +259,14 @@ public:
     // check signature and add entity to system
     void AddEntityToSystems(Entity entity);
 };
+
+/*
+    caution
+    템플릿은 제네릭과 다르게 컴파일 시간에 인스턴스화 됨.
+    따라서 템플릿의 구현을 별도의 .cpp 파일에 넣으면,
+    컴파일러가 다른 소스 파일에서 해당 템플릿을 인스턴스화할 때 필요한 정보를 찾을 수 없게 됨.
+    따라서 링크 오류가 발생함.
+*/
 
 template <typename TComponent, typename... TArgs>
 inline void Registry::AddComponent(Entity entity, TArgs&&... args) {

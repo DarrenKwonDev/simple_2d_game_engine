@@ -32,6 +32,7 @@ Registry::~Registry() {
     Logger::Log("deconstruct registry");
 }
 
+// temp set에 대기 중인 entity를 system에 등록한다.
 void Registry::Update() {
     for (Entity entity : mEntitiesToBeAdded) {
         Registry::AddEntityToSystems(entity);
@@ -106,5 +107,5 @@ std::vector<Entity> System::GetSystemEntities() const {
 }
 
 const Signature& System::GetComponentSignature() const {
-    return mComponentSignature;
+    return mSysRequiredComponentSignature;
 }

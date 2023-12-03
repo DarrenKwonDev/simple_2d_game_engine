@@ -7,9 +7,12 @@
 #include "glm/glm.hpp"
 
 #include "../Components/RigidBodyComponent.h"
+#include "../Components/SpriteComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../ECS/ECS.h"
 #include "../Logger/Logger.h"
+#include "../Systems/MovementSystem.h"
+#include "../Systems/RenderSystem.h"
 #include "Game.h"
 
 using namespace std;
@@ -101,12 +104,20 @@ void Game::ProcessInput() {
 // one time setup
 void Game::Setup() {
 
+    mRegistry->AddSystem<MovementSystem>();
+    mRegistry->AddSystem<RenderSystem>();
+
     Entity tank = mRegistry->CreateEntity();
-
     tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
-    tank.AddComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
+    tank.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 10.0));
+    tank.AddComponent<SpriteComponent>(10, 10);
 
-    tank.RemoveComponent<TransformComponent>();
+    Entity truck = mRegistry->CreateEntity();
+    truck.AddComponent<TransformComponent>(glm::vec2(50.0, 100.0), glm::vec2(1.0, 1.0), 0.5);
+    truck.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 50.0));
+    truck.AddComponent<SpriteComponent>(10, 50);
+
+    // tank.RemoveComponent<TransformComponent>();
 }
 
 // called every frame
@@ -126,16 +137,20 @@ void Game::Update() {
 
     millisecPrevFrame = SDL_GetTicks();
 
-    // TODO: MovementSystem.Update();
-    // CollisionSystem.Update();
-    // DamageSystem.Update();
+    // system update
+    mRegistry->GetSystem<MovementSystem>().Update(deltaTime);
+
+    // system update를 마친후 생성, 삭제 대기 중인 entity를
+    // 다음 tick update에 반영하기 위해 system에 등록
+    // 이 함수의 특성상 최하단에 호출되어야 함
+    mRegistry->Update();
 }
 
 void Game::Render() {
     SDL_SetRenderDrawColor(mRenderer, 153, 153, 153, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(mRenderer); // clears the entire rendering target
 
-    // TODO: render game object
+    mRegistry->GetSystem<RenderSystem>().Update(mRenderer);
 
     // present. (as double buffered renderer, swap back/front buffer)
     SDL_RenderPresent(mRenderer);
