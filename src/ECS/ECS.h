@@ -54,6 +54,7 @@ public:
     int GetId() const;
 
     // 후방에 선언된 Registry를 전방선언하지 않고도 'class' 선언만으로도 대체 가능.
+    // circular deps 문제를 일으킬 가능성이 있으니 조심하자.
     class Registry* mRegistry;
 
     template <typename TComponent, typename... TArgs>
@@ -307,6 +308,12 @@ inline void Registry::RemoveComponent(Entity entity) {
     // entity 객체는 component를 소유하지 않고 있다 (entity-component 관계는 모두 pool에서 관리됨.)
     // 따라서, signature에 특정 비트 위치만 꺼주면 됨.
     mEntityComponentSignatures[entityId].set(componentId, false);
+
+    Logger::Log(
+        "component id: " +
+        std::to_string(componentId) +
+        " was removed from entity id : " +
+        std::to_string(entityId));
 }
 
 // entity에 특정 component가 있는지 확인한다.
@@ -358,4 +365,24 @@ template <typename TSystem>
 inline TSystem& Registry::GetSystem() {
     auto system = mSystemsMap.find(std::type_index(typeid(TSystem)));
     return *(std::static_pointer_cast<TSystem>(system->second));
+}
+
+template <typename TComponent, typename... TArgs>
+inline void Entity::AddComponent(TArgs&&... args) {
+    mRegistry->AddComponent<TComponent>(*this, std::forward<TArgs>(args)...);
+}
+
+template <typename TComponent>
+inline void Entity::RemoveComponent() {
+    mRegistry->RemoveComponent<TComponent>(*this);
+}
+
+template <typename TComponent>
+inline bool Entity::HasComponent() const {
+    return mRegistry->HasComponent<TComponent>(*this);
+}
+
+template <typename TComponent>
+inline TComponent& Entity::GetComponent() const {
+    return mRegistry->GetComponent<TComponent>(*this);
 }
