@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -13,6 +14,7 @@ using namespace std;
 
 Game::Game() {
     mIsRunning = false;
+    mRegistry = std::make_unique<Registry>();
     Logger::Log("Game constructor called");
 }
 
@@ -55,7 +57,7 @@ void Game::Initialize() {
         return;
     }
 
-    SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
+    // SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
 
     mIsRunning = true;
 }
@@ -96,8 +98,11 @@ void Game::ProcessInput() {
 
 // one time setup
 void Game::Setup() {
+
     // TODO: entity tank
-    // Entity tank = registry.CreateEntity();
+    Entity tank = mRegistry->CreateEntity();
+    Entity truck = mRegistry->CreateEntity();
+
     // tank.AddComponent<TransformComponent>();
     // tank.AddComponent<BoxColliderComponent>();
     // tank.AddComponent<SpriteComponent>("./assets/images/tank.png");

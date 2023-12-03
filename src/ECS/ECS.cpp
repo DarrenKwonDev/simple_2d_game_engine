@@ -24,11 +24,30 @@ int Entity::GetId() const {
 // registry
 ////////////////////////////////////////////////////////
 
+Registry::Registry() {
+    Logger::Log("create registry");
+}
+
+Registry::~Registry() {
+    Logger::Log("deconstruct registry");
+}
+
 void Registry::Update() {
+    for (Entity entity : mEntitiesToBeAdded) {
+        Registry::AddEntityToSystems(entity);
+    }
+    mEntitiesToBeAdded.clear();
+
+    // for (auto entity : mEntitiesToBeKilled)
+    // {
+    //     Registry::
+    // }
+    // mEntitiesToBeKilled.clear();
 }
 
 Entity Registry::CreateEntity() {
     int entityId = mNumEntities++;
+
     if (entityId >= mEntityComponentSignatures.size()) {
         // 비록 vector를 사용했지만, 인덱스 기반 접근의 안전성을 위해서 수동 resize.
         // (vector[idx]) 꼴의 접근은 vector의 cap을 증가시키지 않음.
@@ -36,11 +55,12 @@ Entity Registry::CreateEntity() {
     }
 
     Entity entity(entityId);
+
     mEntitiesToBeAdded.insert(entity);
 
     Logger::Log("Entity created, id: " + std::to_string(entityId));
 
-    return entity;
+    return Entity(3);
 }
 
 void Registry::AddEntityToSystems(Entity entity) {
@@ -50,6 +70,7 @@ void Registry::AddEntityToSystems(Entity entity) {
     for (auto& [_, system] : mSystemsMap) {
         const Signature& systemComponentSignature = system->GetComponentSignature();
 
+        // 참조의 비교는 값 비교임.
         bool isInterested = (entityComponentSignature & systemComponentSignature) == systemComponentSignature;
 
         if (isInterested) {

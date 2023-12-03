@@ -182,7 +182,7 @@ private:
     std::unordered_map<std::type_index, System*> mSystemsMap;
 
 public:
-    Registry() = default;
+    Registry();
     virtual ~Registry();
 
     void Update();

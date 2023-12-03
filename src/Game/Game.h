@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../ECS/ECS.h"
 #include <SDL2/SDL.h>
 
 #define FPS (60)
@@ -11,6 +12,7 @@ private:
     uint32_t millisecPrevFrame = 0; // derived from SDL_GetTicks()
     SDL_Window* mWindow;
     SDL_Renderer* mRenderer;
+    std::unique_ptr<Registry> mRegistry;
 
 public:
     Game();
