@@ -18,14 +18,6 @@ public:
     };
 
     void Update(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore) {
-
-        // FIXME: THIS IS BOTTLENECK OF ENGINE
-        // zindex 기반  sorting을 update에서 처리하는 것은 일시적인 구현으로 수정이 필요.
-        // don't just sort by ZIndex.
-        // why? update called per frame.
-        // if entity needs to be update, killed, created very frequently,
-        // game will be slowed and mess up.
-
         struct RenderableEntity {
             TransformComponent transformComp;
             SpriteComponent spriteComp;
@@ -38,6 +30,12 @@ public:
             RenderableEntityVec.emplace_back(re);
         };
 
+        // FIXME: THIS IS BOTTLENECK OF ENGINE
+        // zindex 기반  sorting을 update에서 처리하는 것은 일시적인 구현으로 수정이 필요.
+        // don't just sort by ZIndex.
+        // why? update called per frame.
+        // if entity needs to be update, killed, created very frequently,
+        // game will be slowed and mess up.
         std::sort(RenderableEntityVec.begin(), RenderableEntityVec.end(), [](const RenderableEntity& a, const RenderableEntity& b) {
             return a.spriteComp.mZIndex < b.spriteComp.mZIndex;
         });

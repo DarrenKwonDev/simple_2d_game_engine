@@ -1,27 +1,28 @@
+
+
 <!-- toc -->
 
--   [2d-game-engine-poc](#2d-game-engine-poc)
-    -   [configure](#configure)
-        -   [deps](#deps)
-        -   [library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기](#library를-pre-compiled-binary로-사용하기-vs-내장-lib로-사용하기)
-    -   [game things](#game-things)
-        -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
-        -   [Double-Buffered Renderer](#double-buffered-renderer)
-        -   [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
-        -   [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
-        -   [Determinism](#determinism)
-        -   [ECS(Entity Component System)](#ecsentity-component-system)
-            -   [component의 memory contiguous한 배치와 Pool](#component의-memory-contiguous한-배치와-pool)
-    -   [SLD2](#sld2)
-        -   [paths](#paths)
-        -   [full screen, fake full screen](#full-screen-fake-full-screen)
-        -   [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
-        -   [surface vs texture](#surface-vs-texture)
-    -   [개인적인 coding convention이나 기타 개발 관습에 대해](#개인적인-coding-convention이나-기타-개발-관습에-대해)
-    -   [etc](#etc)
-        -   [OTF(OpenType Font), TTF(TrueType Font)](#otfopentype-font-ttftruetype-font)
-    -   [known issues](#known-issues)
-    -   [resources](#resources)
+- [2d-game-engine-poc](#2d-game-engine-poc)
+  * [configure](#configure)
+    + [deps](#deps)
+  * [game things](#game-things)
+    + [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-%EC%88%98%EC%A7%81-%EB%8F%99%EA%B8%B0%ED%99%94)
+    + [Double-Buffered Renderer](#double-buffered-renderer)
+    + [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
+    + [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
+    + [Determinism](#determinism)
+    + [ECS(Entity Component System)](#ecsentity-component-system)
+      - [component의 memory contiguous한 배치와 Pool](#component%EC%9D%98-memory-contiguous%ED%95%9C-%EB%B0%B0%EC%B9%98%EC%99%80-pool)
+  * [SLD2](#sld2)
+    + [paths](#paths)
+    + [full screen, fake full screen](#full-screen-fake-full-screen)
+    + [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
+    + [surface vs texture](#surface-vs-texture)
+  * [개인적인 coding convention이나 기타 개발 관습에 대해](#%EA%B0%9C%EC%9D%B8%EC%A0%81%EC%9D%B8-coding-convention%EC%9D%B4%EB%82%98-%EA%B8%B0%ED%83%80-%EA%B0%9C%EB%B0%9C-%EA%B4%80%EC%8A%B5%EC%97%90-%EB%8C%80%ED%95%B4)
+  * [etc](#etc)
+    + [OTF(OpenType Font), TTF(TrueType Font)](#otfopentype-font-ttftruetype-font)
+  * [known issues](#known-issues)
+  * [resources](#resources)
 
 <!-- tocstop -->
 
@@ -34,17 +35,6 @@
 ```bash
 brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer lua
 ```
-
-### library를 pre-compiled binary로 사용하기 vs 내장 lib로 사용하기
-
--   pre-compiled binary로 사용하기
-
-    -   이 프로젝트에선 SDL2, lua는 사용하고 있어 -l 옵션으로 링킹해주고, 바이너리를 -L로, 헤더 경로를 -I로 추가해주면 됨.
-    -   이 방식의 장점은, 컴파일 타임을 잡아 먹지 않는다는 것.
-
--   내장 lib로 사용하기
-    -   이 프로젝트에선 glm, imgui, sol은 내장 lib로써 사용하고 있어 소스코드를 전부 다 담고 있다. -I 경로만 추가해주면 됨.
-    -   이 방식의 장점은, 커스터마이징이 용이하고 플랫폼에 종속되지 않는다는 것. 물론 손이 좀 더 가긴 한다.
 
 ## game things
 
