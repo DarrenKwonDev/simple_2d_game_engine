@@ -18,6 +18,8 @@
         -   [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
         -   [surface vs texture](#surface-vs-texture)
     -   [개인적인 coding convention이나 기타 개발 관습에 대해](#개인적인-coding-convention이나-기타-개발-관습에-대해)
+    -   [etc](#etc)
+        -   [OTF(OpenType Font), TTF(TrueType Font)](#otfopentype-font-ttftruetype-font)
     -   [known issues](#known-issues)
     -   [resources](#resources)
 
@@ -235,13 +237,21 @@ SDL_Surface는 이미지 처리나 간단한 소프트웨어 렌더링에 적합
 
 일반적으로 이미지 파일을 로드하고 조작할 때는 SDL_Surface를 사용하고, 화면에 이미지를 렌더링할 때는 SDL_Texture로 변환하여 사용합니다.
 
-SDL_Surface는 시스템 메모리에 저장되고, SDL_Texture는 GPU의 비디오 메모리에 저장됩니다.
+SDL_Surface는 시스템 메모리(RAM)에 저장되고, SDL_Texture는 GPU의 비디오 메모리(VRAM)에 저장됩니다.
 
 ## 개인적인 coding convention이나 기타 개발 관습에 대해
 
 -   여기서는 struct와 class를 혼용하였다. 그러나 struct는 POD만을 담도록 하는 것이 좋다고 생각한다.
 -   c lib는 smart pointer로 wrapping하지 않는다.
 -   여기서는 대입을 통해 멤버 변수를 초기화한 부분이 있으나 가급적 initializer list를 사용하는 것이 좋다고 생각한다.
+
+## etc
+
+### OTF(OpenType Font), TTF(TrueType Font)
+
+둘 다 많이 쓰이는 폰트 포맷이다.  
+OTF는 TTF보다 더 많은 기능을 제공하는 대신 더 큰 용량을 차지하곤 하며,
+오래된 브라우저에서는 지원하지 않는 경우도 있다.
 
 ## known issues
 

@@ -20,6 +20,7 @@ using namespace std;
 Game::Game() {
     mIsRunning = false;
     mRegistry = std::make_unique<Registry>();
+    mAssetStore = std::make_unique<AssetStore>();
     Logger::Log("Game constructor called");
 }
 
@@ -107,15 +108,18 @@ void Game::Setup() {
     mRegistry->AddSystem<MovementSystem>();
     mRegistry->AddSystem<RenderSystem>();
 
+    mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
+    mAssetStore->AddTexture(mRenderer, "truck-image", "./assets/images/truck-ford-right.png");
+
     Entity tank = mRegistry->CreateEntity();
     tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
     tank.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 10.0));
-    tank.AddComponent<SpriteComponent>(10, 10);
+    tank.AddComponent<SpriteComponent>("tank-image", 10, 10);
 
     Entity truck = mRegistry->CreateEntity();
     truck.AddComponent<TransformComponent>(glm::vec2(50.0, 100.0), glm::vec2(1.0, 1.0), 0.5);
     truck.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 50.0));
-    truck.AddComponent<SpriteComponent>(10, 50);
+    truck.AddComponent<SpriteComponent>("truck-image", 10, 50);
 
     // tank.RemoveComponent<TransformComponent>();
 }

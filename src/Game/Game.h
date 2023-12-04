@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../AssetStore/AssetStore.h"
 #include "../ECS/ECS.h"
 #include <SDL2/SDL.h>
 
@@ -16,6 +17,7 @@ private:
     SDL_Renderer* mRenderer;
 
     std::unique_ptr<Registry> mRegistry; // class에서 선언한 smart ptr 멤버 변수는 deconstruct될 때 수거 된다.
+    std::unique_ptr<AssetStore> mAssetStore;
 
 public:
     Game();
