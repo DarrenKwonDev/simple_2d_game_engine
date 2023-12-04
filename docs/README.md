@@ -1,28 +1,26 @@
-
-
 <!-- toc -->
 
-- [2d-game-engine-poc](#2d-game-engine-poc)
-  * [configure](#configure)
-    + [deps](#deps)
-  * [game things](#game-things)
-    + [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-%EC%88%98%EC%A7%81-%EB%8F%99%EA%B8%B0%ED%99%94)
-    + [Double-Buffered Renderer](#double-buffered-renderer)
-    + [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
-    + [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
-    + [Determinism](#determinism)
-    + [ECS(Entity Component System)](#ecsentity-component-system)
-      - [component의 memory contiguous한 배치와 Pool](#component%EC%9D%98-memory-contiguous%ED%95%9C-%EB%B0%B0%EC%B9%98%EC%99%80-pool)
-  * [SLD2](#sld2)
-    + [paths](#paths)
-    + [full screen, fake full screen](#full-screen-fake-full-screen)
-    + [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
-    + [surface vs texture](#surface-vs-texture)
-  * [개인적인 coding convention이나 기타 개발 관습에 대해](#%EA%B0%9C%EC%9D%B8%EC%A0%81%EC%9D%B8-coding-convention%EC%9D%B4%EB%82%98-%EA%B8%B0%ED%83%80-%EA%B0%9C%EB%B0%9C-%EA%B4%80%EC%8A%B5%EC%97%90-%EB%8C%80%ED%95%B4)
-  * [etc](#etc)
-    + [OTF(OpenType Font), TTF(TrueType Font)](#otfopentype-font-ttftruetype-font)
-  * [known issues](#known-issues)
-  * [resources](#resources)
+-   [2d-game-engine-poc](#2d-game-engine-poc)
+    -   [configure](#configure)
+        -   [deps](#deps)
+    -   [game things](#game-things)
+        -   [VSync (vertical sync, 수직 동기화)](#vsync-vertical-sync-수직-동기화)
+        -   [Double-Buffered Renderer](#double-buffered-renderer)
+        -   [Fixed Time Step(Frame Rate Independence) game loop](#fixed-time-stepframe-rate-independence-game-loop)
+        -   [Variable Delta-Time (frame drop compensate with delta time)](#variable-delta-time-frame-drop-compensate-with-delta-time)
+        -   [Determinism](#determinism)
+        -   [ECS(Entity Component System)](#ecsentity-component-system)
+            -   [component의 memory contiguous한 배치와 Pool](#component의-memory-contiguous한-배치와-pool)
+    -   [SLD2](#sld2)
+        -   [paths](#paths)
+        -   [full screen, fake full screen](#full-screen-fake-full-screen)
+        -   [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
+        -   [surface vs texture](#surface-vs-texture)
+    -   [개인적인 coding convention이나 기타 개발 관습에 대해](#개인적인-coding-convention이나-기타-개발-관습에-대해)
+    -   [etc](#etc)
+        -   [OTF(OpenType Font), TTF(TrueType Font)](#otfopentype-font-ttftruetype-font)
+    -   [known issues](#known-issues)
+    -   [resources](#resources)
 
 <!-- tocstop -->
 
@@ -234,6 +232,7 @@ SDL_Surface는 시스템 메모리(RAM)에 저장되고, SDL_Texture는 GPU의 �
 -   여기서는 struct와 class를 혼용하였다. 그러나 struct는 POD만을 담도록 하는 것이 좋다고 생각한다.
 -   c lib는 smart pointer로 wrapping하지 않는다.
 -   여기서는 대입을 통해 멤버 변수를 초기화한 부분이 있으나 가급적 initializer list를 사용하는 것이 좋다고 생각한다.
+-   IDE로 vscode를 사용 중인데, c/c++ extension가 제공해주는 intellisense가 아주 느리다. [clangd](https://clangd.llvm.org/) 사용을 권장하며, 사용하는 빌드 시스템 툴에 따라 compile_commands.json을 생성하여 사용하자.
 
 ## etc
 

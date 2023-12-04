@@ -6,3 +6,7 @@ assets/tilemaps/**/*
 docs/private/
 gameengine
 videoCheck
+
+# clangd
+.cache
+compile_commands.json
