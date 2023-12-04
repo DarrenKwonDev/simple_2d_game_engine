@@ -112,14 +112,14 @@ void Game::Setup() {
     mAssetStore->AddTexture(mRenderer, "truck-image", "./assets/images/truck-ford-right.png");
 
     Entity tank = mRegistry->CreateEntity();
-    tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
-    tank.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 10.0));
-    tank.AddComponent<SpriteComponent>("tank-image", 10, 10);
+    tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(2.0, 2.0), 45.0);
+    tank.AddComponent<RigidBodyComponent>(glm::vec2(80.0, 00.0));
+    tank.AddComponent<SpriteComponent>("tank-image", 32, 32);
 
     Entity truck = mRegistry->CreateEntity();
     truck.AddComponent<TransformComponent>(glm::vec2(50.0, 100.0), glm::vec2(1.0, 1.0), 0.5);
     truck.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 50.0));
-    truck.AddComponent<SpriteComponent>("truck-image", 10, 50);
+    truck.AddComponent<SpriteComponent>("truck-image", 32, 32);
 
     // tank.RemoveComponent<TransformComponent>();
 }
@@ -150,11 +150,14 @@ void Game::Update() {
     mRegistry->Update();
 }
 
+// game loop 진행 상 Game::Update 직후 Game::Render 함수 호출.
+// 결과적으로 per frame마다 호출됨.
+// Game::Update에서 변경된 state를 기반으로 그래픽 표현.
 void Game::Render() {
     SDL_SetRenderDrawColor(mRenderer, 153, 153, 153, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(mRenderer); // clears the entire rendering target
 
-    mRegistry->GetSystem<RenderSystem>().Update(mRenderer);
+    mRegistry->GetSystem<RenderSystem>().Update(mRenderer, mAssetStore);
 
     // present. (as double buffered renderer, swap back/front buffer)
     SDL_RenderPresent(mRenderer);
