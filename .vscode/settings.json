@@ -92,5 +92,6 @@
         "cinttypes": "cpp",
         "set": "cpp",
         "typeindex": "cpp"
-    }
+    },
+    "cSpell.words": ["tilemap"]
 }

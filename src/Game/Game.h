@@ -25,6 +25,7 @@ public:
 
     void Initialize();
     void RunGameLoop();
+    void LoadLevel(int level);
     void Setup();
     void ProcessInput();
     void Update();

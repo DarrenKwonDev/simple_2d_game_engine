@@ -5,8 +5,9 @@
 
 #include <SDL2/SDL.h>
 
-// one single source of truth of asset
-// should be singleton
+////////////////////////////////////////
+// texture, audio 등을 저장하는 singleton
+////////////////////////////////////////
 class AssetStore {
 private:
     std::map<std::string, SDL_Texture*> mTextures;

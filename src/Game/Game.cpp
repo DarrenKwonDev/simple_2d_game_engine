@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <memory>
 
@@ -102,17 +103,58 @@ void Game::ProcessInput() {
     };
 }
 
-// one time setup
-void Game::Setup() {
-
+void Game::LoadLevel(int level) {
+    // add system
     mRegistry->AddSystem<MovementSystem>();
     mRegistry->AddSystem<RenderSystem>();
 
+    // add texture
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
     mAssetStore->AddTexture(mRenderer, "truck-image", "./assets/images/truck-ford-right.png");
 
+    // tilemap
+    mAssetStore->AddTexture(mRenderer, "tilemap-image", "./assets/tilemaps/jungle.png");
+    int tileSize = 32; // 32 pixel
+    double tileScale = 1.0;
+    int mapNumCols = 25;
+    int mapNumRows = 20;
+
+    std::fstream mapFile;
+    mapFile.open("./assets/tilemaps/jungle.map");
+    if (!mapFile) {
+        // TODO: error handling
+        exit(1);
+    }
+
+    for (int y = 0; y < mapNumRows; y++) {
+        for (int x = 0; x < mapNumCols; x++) {
+            char ch;
+            mapFile.get(ch);
+            int srcRectY = std::atoi(&ch) * tileSize;
+            mapFile.get(ch);
+            int srcRectX = std::atoi(&ch) * tileSize;
+            mapFile.ignore(); // ','는 버려야 하므로.
+
+            Entity tile = mRegistry->CreateEntity();
+            tile.AddComponent<TransformComponent>(
+                glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
+                glm::vec2(tileScale, tileScale),
+                0.0);
+
+            // tilemap-image의 x, y 좌표에 의해 렌더링 함.
+            // tilemap-image의 배치는 다음과 같음.
+            // 0 1 2 3 4 5 6 7 8 9
+            // 10 11 12 13 14 15 16 17 18 19
+            // 20 21 22 23 24 25 26 27 28 29
+            tile.AddComponent<SpriteComponent>("tilemap-image", tileSize, tileSize, srcRectX, srcRectY);
+        }
+    }
+
+    mapFile.close();
+
+    // create entity and add component
     Entity tank = mRegistry->CreateEntity();
-    tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(2.0, 2.0), 45.0);
+    tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 45.0);
     tank.AddComponent<RigidBodyComponent>(glm::vec2(80.0, 00.0));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32);
 
@@ -122,6 +164,11 @@ void Game::Setup() {
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32);
 
     // tank.RemoveComponent<TransformComponent>();
+}
+
+// one time setup
+void Game::Setup() {
+    Game::LoadLevel(1);
 }
 
 // called every frame
