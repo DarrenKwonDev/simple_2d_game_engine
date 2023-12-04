@@ -3,5 +3,6 @@ assets/fonts/**/*
 assets/images/**/*
 assets/sounds/**/*
 assets/tilemaps/**/*
+docs/private/
 gameengine
 videoCheck

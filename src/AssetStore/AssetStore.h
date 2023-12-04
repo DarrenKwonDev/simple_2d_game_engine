@@ -11,8 +11,7 @@
 class AssetStore {
 private:
     std::map<std::string, SDL_Texture*> mTextures;
-    // TODO:
-    // map for fonts, map for audio, etc...
+    // TODO: map for fonts, map for audio, etc...
 
 public:
     AssetStore();
