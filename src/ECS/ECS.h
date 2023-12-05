@@ -24,8 +24,7 @@ protected:
     static int nextId;
 };
 
-template <typename T>
-class Component : public IComponent {
+template <typename T> class Component : public IComponent {
 public:
     Component();
     virtual ~Component();
@@ -58,33 +57,21 @@ public:
     class Registry* mRegistry;
 
     // args에 무엇을 정의하는가에 따라 TArgs가 컴파일타임에 결정된다.
-    template <typename TComponent, typename... TArgs>
-    void AddComponent(TArgs&&... args);
+    template <typename TComponent, typename... TArgs> void AddComponent(TArgs&&... args);
 
-    template <typename TComponent>
-    void RemoveComponent();
+    template <typename TComponent> void RemoveComponent();
 
-    template <typename TComponent>
-    bool HasComponent() const;
+    template <typename TComponent> bool HasComponent() const;
 
-    template <typename TComponent>
-    TComponent& GetComponent() const;
+    template <typename TComponent> TComponent& GetComponent() const;
 
     Entity(const Entity& rhs) = default;        // 복사 생성
     Entity& operator=(const Entity&) = default; // 복사 대입 연산
 
-    bool operator==(const Entity& rhs) const {
-        return mId == rhs.mId;
-    };
-    bool operator!=(const Entity& rhs) const {
-        return mId != rhs.mId;
-    };
-    bool operator>(const Entity& rhs) const {
-        return mId > rhs.mId;
-    };
-    bool operator<(const Entity& rhs) const {
-        return mId < rhs.mId;
-    };
+    bool operator==(const Entity& rhs) const { return mId == rhs.mId; };
+    bool operator!=(const Entity& rhs) const { return mId != rhs.mId; };
+    bool operator>(const Entity& rhs) const { return mId > rhs.mId; };
+    bool operator<(const Entity& rhs) const { return mId < rhs.mId; };
 };
 
 ////////////////////////////////////////////////////////
@@ -108,12 +95,10 @@ public:
     std::vector<Entity> GetSystemEntities() const;
     const Signature& GetComponentSignature() const;
 
-    template <typename TComponent>
-    void RequireComponent();
+    template <typename TComponent> void RequireComponent();
 };
 
-template <typename TComponent>
-inline void System::RequireComponent() {
+template <typename TComponent> inline void System::RequireComponent() {
     const auto componentId = Component<TComponent>::GetId();
     mSysRequiredComponentSignature.set(componentId);
 };
@@ -133,42 +118,23 @@ public:
     virtual ~IPool(){};
 };
 
-template <typename T>
-class Pool : public IPool {
+template <typename T> class Pool : public IPool {
 private:
     std::vector<T> data;
 
 public:
-    Pool(int size = 100) {
-        data.resize(size);
-    };
+    Pool(int size = 100) { data.resize(size); };
     virtual ~Pool() = default;
 
-    T& operator[](unsigned int index) {
-        return data[index];
-    }
+    T& operator[](unsigned int index) { return data[index]; }
 
-    bool isEmpty() const {
-        return data.empty();
-    }
-    int GetSize() const {
-        return data.size();
-    }
-    void Resize(int n) {
-        data.resize(n);
-    }
-    void Clear() {
-        data.clear();
-    }
-    void Add(const T object) {
-        data.push_back(object);
-    }
-    void Set(int index, const T object) {
-        data[index] = object;
-    }
-    T& Get(int index) {
-        return static_cast<T&>(data[index]);
-    }
+    bool isEmpty() const { return data.empty(); }
+    int GetSize() const { return data.size(); }
+    void Resize(int n) { data.resize(n); }
+    void Clear() { data.clear(); }
+    void Add(const T object) { data.push_back(object); }
+    void Set(int index, const T object) { data[index] = object; }
+    T& Get(int index) { return static_cast<T&>(data[index]); }
 };
 
 ////////////////////////////////////////////////////////
@@ -224,37 +190,29 @@ public:
     void KillEntity();
 
     // entity에 특정 component를 추가합니다.
-    template <typename TComponent, typename... TArgs>
-    void AddComponent(Entity entity, TArgs&&... args);
+    template <typename TComponent, typename... TArgs> void AddComponent(Entity entity, TArgs&&... args);
 
     // entity에 특정 component를 삭제합니다
-    template <typename TComponent>
-    void RemoveComponent(Entity entity);
+    template <typename TComponent> void RemoveComponent(Entity entity);
 
     // entity에 특정 component가 존재하는지 확인합니다.
-    template <typename TComponent>
-    bool HasComponent(Entity entity) const;
+    template <typename TComponent> bool HasComponent(Entity entity) const;
 
     // entity의 component를 확인합니다.
-    template <typename TComponent>
-    TComponent& GetComponent(Entity entity) const;
+    template <typename TComponent> TComponent& GetComponent(Entity entity) const;
 
     /////////////////////////
     // system
     /////////////////////////
 
     // 시스템을 추가, 삭제, 조회 등.
-    template <typename TSystem, typename... TArgs>
-    void AddSystem(TArgs&&... args);
+    template <typename TSystem, typename... TArgs> void AddSystem(TArgs&&... args);
 
-    template <typename TSystem>
-    void RemoveSystem();
+    template <typename TSystem> void RemoveSystem();
 
-    template <typename TSystem>
-    bool HasSystem() const;
+    template <typename TSystem> bool HasSystem() const;
 
-    template <typename TSystem>
-    TSystem& GetSystem();
+    template <typename TSystem> TSystem& GetSystem();
 
     // check signature and add entity to system
     void AddEntityToSystems(Entity entity);
@@ -268,8 +226,7 @@ public:
     따라서 링크 오류가 발생함.
 */
 
-template <typename TComponent, typename... TArgs>
-inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
+template <typename TComponent, typename... TArgs> inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
     const auto componentId = Component<TComponent>::GetId();
     const auto entityId = entity.GetId();
 
@@ -287,7 +244,8 @@ inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
         mComponentPools[componentId] = newComponentPool;
     }
 
-    std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(mComponentPools[componentId]);
+    std::shared_ptr<Pool<TComponent>> componentPool =
+        std::static_pointer_cast<Pool<TComponent>>(mComponentPools[componentId]);
 
     // (entity count, component count) 이차원 행렬을 위해서.
     if (entityId >= componentPool->GetSize()) {
@@ -304,16 +262,12 @@ inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
     // entity의 signature에 특정 componentId에 해당하는 bit를 올려준다.
     mEntityComponentSignatures[entityId].set(componentId);
 
-    Logger::Log(
-        "component id: " +
-        std::to_string(componentId) +
-        " was added to entity id : " +
-        std::to_string(entityId));
+    Logger::Log("component id: " + std::to_string(componentId) +
+                " was added to entity id : " + std::to_string(entityId));
 }
 
 // entity에 특정 component를 삭제합니다
-template <typename TComponent>
-inline void Registry::RemoveComponent(Entity entity) {
+template <typename TComponent> inline void Registry::RemoveComponent(Entity entity) {
     const auto componentId = Component<TComponent>::GetId();
     const auto entityId = entity.GetId();
 
@@ -321,16 +275,12 @@ inline void Registry::RemoveComponent(Entity entity) {
     // 따라서, signature에 특정 비트 위치만 꺼주면 됨.
     mEntityComponentSignatures[entityId].set(componentId, false);
 
-    Logger::Log(
-        "component id: " +
-        std::to_string(componentId) +
-        " was removed from entity id : " +
-        std::to_string(entityId));
+    Logger::Log("component id: " + std::to_string(componentId) +
+                " was removed from entity id : " + std::to_string(entityId));
 }
 
 // entity에 특정 component가 있는지 확인한다.
-template <typename TComponent>
-inline bool Registry::HasComponent(Entity entity) const {
+template <typename TComponent> inline bool Registry::HasComponent(Entity entity) const {
     const auto componentId = Component<TComponent>::GetId();
     const auto entityId = entity.GetId();
 
@@ -338,8 +288,7 @@ inline bool Registry::HasComponent(Entity entity) const {
 }
 
 // entity가 소유한 특정 component(TComponent) 찾기
-template <typename TComponent>
-inline TComponent& Registry::GetComponent(Entity entity) const {
+template <typename TComponent> inline TComponent& Registry::GetComponent(Entity entity) const {
     const auto componentId = Component<TComponent>::GetId();
     const auto entityId = entity.GetId();
 
@@ -350,51 +299,40 @@ inline TComponent& Registry::GetComponent(Entity entity) const {
     return componentPool->Get(entityId);
 }
 
-template <typename TSystem, typename... TArgs>
-inline void Registry::AddSystem(TArgs&&... args) {
+template <typename TSystem, typename... TArgs> inline void Registry::AddSystem(TArgs&&... args) {
     std::shared_ptr<TSystem> newSystem = std::make_shared<TSystem>(std::forward<TArgs>(args)...);
 
     // typeid
     // https://en.cppreference.com/w/cpp/language/typeid
     // typeid는 런타임에 객체의 타입 정보를 얻어오는데 사용 됩니다.
     // 동적 바인딩처럼, 실제 타입에 대한 정보를 반환합니다.
-    mSystemsMap.insert(
-        std::make_pair(std::type_index(typeid(TSystem)), newSystem));
+    mSystemsMap.insert(std::make_pair(std::type_index(typeid(TSystem)), newSystem));
 }
 
-template <typename TSystem>
-inline void Registry::RemoveSystem() {
+template <typename TSystem> inline void Registry::RemoveSystem() {
     auto system = mSystemsMap.find(std::type_index(typeid(TSystem)));
     mSystemsMap.erase(system);
 }
 
-template <typename TSystem>
-inline bool Registry::HasSystem() const {
+template <typename TSystem> inline bool Registry::HasSystem() const {
     return mSystemsMap.find(std::type_index(typeid(TSystem))) != mSystemsMap.end();
 }
 
-template <typename TSystem>
-inline TSystem& Registry::GetSystem() {
+template <typename TSystem> inline TSystem& Registry::GetSystem() {
     auto system = mSystemsMap.find(std::type_index(typeid(TSystem)));
     return *(std::static_pointer_cast<TSystem>(system->second));
 }
 
-template <typename TComponent, typename... TArgs>
-inline void Entity::AddComponent(TArgs&&... args) {
+template <typename TComponent, typename... TArgs> inline void Entity::AddComponent(TArgs&&... args) {
     mRegistry->AddComponent<TComponent>(*this, std::forward<TArgs>(args)...);
 }
 
-template <typename TComponent>
-inline void Entity::RemoveComponent() {
-    mRegistry->RemoveComponent<TComponent>(*this);
-}
+template <typename TComponent> inline void Entity::RemoveComponent() { mRegistry->RemoveComponent<TComponent>(*this); }
 
-template <typename TComponent>
-inline bool Entity::HasComponent() const {
+template <typename TComponent> inline bool Entity::HasComponent() const {
     return mRegistry->HasComponent<TComponent>(*this);
 }
 
-template <typename TComponent>
-inline TComponent& Entity::GetComponent() const {
+template <typename TComponent> inline TComponent& Entity::GetComponent() const {
     return mRegistry->GetComponent<TComponent>(*this);
 }

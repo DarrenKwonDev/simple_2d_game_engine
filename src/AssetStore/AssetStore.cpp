@@ -6,9 +6,7 @@
 #include "../Logger/Logger.h"
 #include "AssetStore.h"
 
-AssetStore::AssetStore() {
-    Logger::Log("asset store constructor called");
-}
+AssetStore::AssetStore() { Logger::Log("asset store constructor called"); }
 AssetStore::~AssetStore() {
     AssetStore::ClearAssets();
     Logger::Log("asset store deconstructor called");
@@ -22,10 +20,7 @@ void AssetStore::ClearAssets() {
     mTextures.clear();
 }
 
-void AssetStore::AddTexture(
-    SDL_Renderer* renderer,
-    const std::string& assetId,
-    const std::string& filePath) {
+void AssetStore::AddTexture(SDL_Renderer* renderer, const std::string& assetId, const std::string& filePath) {
 
     SDL_Surface* surface = IMG_Load(filePath.c_str());
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);

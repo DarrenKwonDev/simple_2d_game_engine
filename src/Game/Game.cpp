@@ -5,8 +5,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "glm/glm.hpp"
-
 #include "../Components/AnimationComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/SpriteComponent.h"
@@ -27,9 +25,7 @@ Game::Game() {
     Logger::Log("Game constructor called");
 }
 
-Game::~Game() {
-    Logger::Log("Game deconstructor called");
-}
+Game::~Game() { Logger::Log("Game deconstructor called"); }
 
 void Game::Initialize() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -43,11 +39,8 @@ void Game::Initialize() {
     mWindowHeight = displayMode.h;
 
     // create window
-    mWindow = SDL_CreateWindow(
-        NULL,
-        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        mWindowWidth, mWindowHeight,
-        SDL_WINDOW_BORDERLESS);
+    mWindow = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWindowWidth, mWindowHeight,
+                               SDL_WINDOW_BORDERLESS);
 
     if (!mWindow) {
         Logger::Err("Error creating SDL window");
@@ -55,10 +48,9 @@ void Game::Initialize() {
     }
 
     // create renderer
-    mRenderer = SDL_CreateRenderer(
-        mWindow,
-        -1,                                                  // 기본 그래픽 드라이버 사용
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC // GPU 사용 + Vsync
+    mRenderer = SDL_CreateRenderer(mWindow,
+                                   -1, // 기본 그래픽 드라이버 사용
+                                   SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC // GPU 사용 + Vsync
     );
 
     if (!mRenderer) {
@@ -115,6 +107,7 @@ void Game::LoadLevel(int level) {
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
     mAssetStore->AddTexture(mRenderer, "truck-image", "./assets/images/truck-ford-right.png");
     mAssetStore->AddTexture(mRenderer, "chopper-image", "./assets/images/chopper.png");
+    mAssetStore->AddTexture(mRenderer, "radar-image", "./assets/images/radar.png");
 
     // tilemap
     mAssetStore->AddTexture(mRenderer, "tilemap-image", "./assets/tilemaps/jungle.png");
@@ -140,10 +133,8 @@ void Game::LoadLevel(int level) {
             mapFile.ignore(); // ','는 버려야 하므로.
 
             Entity tile = mRegistry->CreateEntity();
-            tile.AddComponent<TransformComponent>(
-                glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
-                glm::vec2(tileScale, tileScale),
-                0.0);
+            tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
+                                                  glm::vec2(tileScale, tileScale), 0.0);
 
             // tilemap-image의 x, y 좌표에 의해 렌더링 함.
             // tilemap-image의 배치는 다음과 같음.
@@ -158,10 +149,16 @@ void Game::LoadLevel(int level) {
 
     // create entity and add component
     Entity chopper = mRegistry->CreateEntity();
-    chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 45.0);
-    chopper.AddComponent<RigidBodyComponent>(glm::vec2(80.0, 00.0));
+    chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+    chopper.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
-    chopper.AddComponent<AnimationComponent>(2, 5, true);
+    chopper.AddComponent<AnimationComponent>(2, 15, true); // it has 2 frame and render five frame per sec
+
+    Entity radar = mRegistry->CreateEntity();
+    radar.AddComponent<TransformComponent>(glm::vec2(500.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
+    radar.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
+    radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 2);
+    radar.AddComponent<AnimationComponent>(8, 5, true);
 
     Entity tank = mRegistry->CreateEntity();
     tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 45.0);
@@ -177,9 +174,7 @@ void Game::LoadLevel(int level) {
 }
 
 // one time setup
-void Game::Setup() {
-    Game::LoadLevel(1);
-}
+void Game::Setup() { Game::LoadLevel(1); }
 
 // called every frame
 void Game::Update() {

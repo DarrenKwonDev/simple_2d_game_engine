@@ -4,11 +4,7 @@
 #include <string>
 #include <vector>
 
-enum LogType {
-    LOG_INFO,
-    LOG_WARNING,
-    LOG_ERROR
-};
+enum LogType { LOG_INFO, LOG_WARNING, LOG_ERROR };
 
 struct LogEntry {
     LogType type;

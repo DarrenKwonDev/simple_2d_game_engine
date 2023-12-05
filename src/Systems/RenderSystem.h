@@ -36,9 +36,10 @@ public:
         // why? update called per frame.
         // if entity needs to be update, killed, created very frequently,
         // game will be slowed and mess up.
-        std::sort(RenderableEntityVec.begin(), RenderableEntityVec.end(), [](const RenderableEntity& a, const RenderableEntity& b) {
-            return a.spriteComp.mZIndex < b.spriteComp.mZIndex;
-        });
+        std::sort(RenderableEntityVec.begin(), RenderableEntityVec.end(),
+                  [](const RenderableEntity& a, const RenderableEntity& b) {
+                      return a.spriteComp.mZIndex < b.spriteComp.mZIndex;
+                  });
 
         // render concerned entity
         for (RenderableEntity renderableEntity : RenderableEntityVec) {
@@ -47,20 +48,12 @@ public:
 
             SDL_Rect srcRect = sprite.mSrcRect;
 
-            SDL_Rect dstRect = {
-                static_cast<int>(transform.mPosition.x),
-                static_cast<int>(transform.mPosition.y),
-                static_cast<int>(sprite.mWidth * transform.mScale.x),
-                static_cast<int>(sprite.mHeight * transform.mScale.y)};
+            SDL_Rect dstRect = {static_cast<int>(transform.mPosition.x), static_cast<int>(transform.mPosition.y),
+                                static_cast<int>(sprite.mWidth * transform.mScale.x),
+                                static_cast<int>(sprite.mHeight * transform.mScale.y)};
 
-            SDL_RenderCopyEx(
-                renderer,
-                assetStore->GetTexture(sprite.mAssetId),
-                &srcRect,
-                &dstRect,
-                transform.mRotation,
-                NULL,
-                SDL_FLIP_NONE);
+            SDL_RenderCopyEx(renderer, assetStore->GetTexture(sprite.mAssetId), &srcRect, &dstRect, transform.mRotation,
+                             NULL, SDL_FLIP_NONE);
         };
     };
 };

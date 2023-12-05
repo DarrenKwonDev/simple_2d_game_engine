@@ -7,7 +7,7 @@ TabWidth: 4
 BreakBeforeBraces: Attach
 AllowShortIfStatementsOnASingleLine: false
 IndentCaseLabels: false
-ColumnLimit: 0
+ColumnLimit: 120
 AccessModifierOffset: -4
 PointerAlignment: Left
 UseTab: Never
