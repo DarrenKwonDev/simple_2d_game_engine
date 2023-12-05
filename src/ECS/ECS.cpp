@@ -20,6 +20,10 @@ int Entity::GetId() const {
     return this->mId;
 }
 
+void Entity::Kill() {
+    mRegistry->KillEntity(*this);
+}
+
 ////////////////////////////////////////////////////////
 // registry
 ////////////////////////////////////////////////////////
@@ -39,20 +43,30 @@ void Registry::Update() {
     }
     mEntitiesToBeAdded.clear();
 
-    // for (auto entity : mEntitiesToBeKilled)
-    // {
-    //     Registry::
-    // }
-    // mEntitiesToBeKilled.clear();
+    for (auto entity : mEntitiesToBeKilled) {
+        Registry::RemoveEntityFromSystems(entity);
+
+        mEntityComponentSignatures[entity.GetId()].reset();
+
+        // for reusing entity
+        mFreeIds.push_back(entity.GetId());
+    }
+    mEntitiesToBeKilled.clear();
 }
 
 Entity Registry::CreateEntity() {
-    int entityId = mNumEntities++;
+    int entityId;
 
-    if (entityId >= mEntityComponentSignatures.size()) {
-        // 비록 vector를 사용했지만, 인덱스 기반 접근의 안전성을 위해서 수동 resize.
-        // (vector[idx]) 꼴의 접근은 vector의 cap을 증가시키지 않음.
-        mEntityComponentSignatures.resize(entityId + 1);
+    if (mFreeIds.empty()) {
+        entityId = mNumEntities++;
+        if (entityId >= mEntityComponentSignatures.size()) {
+            // 비록 vector를 사용했지만, 인덱스 기반 접근의 안전성을 위해서 수동 resize.
+            // (vector[idx]) 꼴의 접근은 vector의 cap을 증가시키지 않음.
+            mEntityComponentSignatures.resize(entityId + 1);
+        }
+    } else {
+        entityId = mFreeIds.front();
+        mFreeIds.pop_front();
     }
 
     Entity entity(entityId);
@@ -63,6 +77,10 @@ Entity Registry::CreateEntity() {
     Logger::Log("Entity created, id: " + std::to_string(entityId));
 
     return entity;
+}
+
+void Registry::KillEntity(Entity entity) {
+    mEntitiesToBeKilled.insert(entity);
 }
 
 void Registry::AddEntityToSystems(Entity entity) {
@@ -78,6 +96,12 @@ void Registry::AddEntityToSystems(Entity entity) {
         if (isInterested) {
             system->AddEntityToSystem(entity);
         }
+    }
+}
+
+void Registry::RemoveEntityFromSystems(Entity entity) {
+    for (auto& [_, system] : mSystemsMap) {
+        system->RemoveEntityFromSystem(entity);
     }
 }
 

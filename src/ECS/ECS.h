@@ -1,6 +1,7 @@
 #pragma once
 
 #include <bitset>
+#include <deque>
 #include <set>
 #include <typeindex>
 #include <unordered_map>
@@ -51,6 +52,7 @@ public:
     virtual ~Entity();
 
     int GetId() const;
+    void Kill();
 
     // 후방에 선언된 Registry를 전방선언하지 않고도 'class' 선언만으로도 대체 가능.
     // circular deps 문제를 일으킬 가능성이 있으니 조심하자.
@@ -203,6 +205,9 @@ private:
     // 각 시스템의 목록.
     std::unordered_map<std::type_index, std::shared_ptr<System>> mSystemsMap;
 
+    // killing된 entity의 목록
+    std::deque<int> mFreeIds;
+
 public:
     Registry();
     virtual ~Registry();
@@ -213,7 +218,7 @@ public:
     // entity
     /////////////////////////
     Entity CreateEntity();
-    void KillEntity();
+    void KillEntity(Entity entity);
 
     // entity에 특정 component를 추가합니다.
     template <typename TComponent, typename... TArgs> void AddComponent(Entity entity, TArgs&&... args);
@@ -240,8 +245,9 @@ public:
 
     template <typename TSystem> TSystem& GetSystem();
 
-    // check signature and add entity to system
+    // check signature and add, remove entity to system
     void AddEntityToSystems(Entity entity);
+    void RemoveEntityFromSystems(Entity entity);
 };
 
 /*

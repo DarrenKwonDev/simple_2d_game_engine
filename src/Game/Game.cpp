@@ -179,13 +179,13 @@ void Game::LoadLevel(int level) {
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
     tank.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
 
+    // tank.Kill(); // tank will not appear
+
     Entity truck = mRegistry->CreateEntity();
     truck.AddComponent<TransformComponent>(glm::vec2(10.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     truck.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 00.0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 10);
     truck.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
-
-    // tank.RemoveComponent<TransformComponent>();
 }
 
 // one time setup

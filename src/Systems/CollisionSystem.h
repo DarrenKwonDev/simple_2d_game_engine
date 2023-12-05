@@ -26,17 +26,21 @@ public:
                 auto bTransform = b.GetComponent<TransformComponent>();
                 auto bCollider = b.GetComponent<BoxColliderComponent>();
 
-                bool isCollied = CheckAABBCollision(aTransform.mPosition.x + aCollider.mOffset.x,
-                                                    aTransform.mPosition.y + aCollider.mOffset.x,
-                                                    aCollider.mWidth,
-                                                    aCollider.mHeight,
-                                                    bTransform.mPosition.x + bCollider.mOffset.x,
-                                                    bTransform.mPosition.y + bCollider.mOffset.y,
-                                                    bCollider.mWidth,
-                                                    bCollider.mHeight);
-                if (isCollied) {
+                bool isCollided = CheckAABBCollision(aTransform.mPosition.x + aCollider.mOffset.x,
+                                                     aTransform.mPosition.y + aCollider.mOffset.x,
+                                                     aCollider.mWidth,
+                                                     aCollider.mHeight,
+                                                     bTransform.mPosition.x + bCollider.mOffset.x,
+                                                     bTransform.mPosition.y + bCollider.mOffset.y,
+                                                     bCollider.mWidth,
+                                                     bCollider.mHeight);
+                if (isCollided) {
                     Logger::Log("entity " + std::to_string(a.GetId()) + " colliding with entity " +
                                 std::to_string(b.GetId()));
+
+                    // TODO: do something when two entity collided.
+                    // a.Kill();
+                    // b.Kill();
                 }
             }
         }
