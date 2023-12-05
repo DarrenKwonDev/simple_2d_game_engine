@@ -12,7 +12,8 @@
         -   [ECS(Entity Component System)](#ecsentity-component-system)
             -   [component의 memory contiguous한 배치와 Pool](#component의-memory-contiguous한-배치와-pool)
         -   [collision check](#collision-check)
-            -   [AABB collision check](#aabb-collision-check)
+            -   [circle collision detection](#circle-collision-detection)
+            -   [AABB collision detection](#aabb-collision-detection)
     -   [SLD2](#sld2)
         -   [paths](#paths)
         -   [full screen, fake full screen](#full-screen-fake-full-screen)
@@ -164,7 +165,13 @@ Pool의 구현은 단순히 memory contiguous한 자료구조(vector, array, ...
 
 이 엔진에선 box collider로 감싼 entity의 충돌을 AABB collision check로 확인함.
 
-#### AABB collision check
+#### circle collision detection
+
+단순하게, 원의 중심점 사이의 거리가 반지름의 합보다 작으면 충돌이 발생한 것으로 간주한다.
+
+<img src="./imgs/circle_collision.jpeg" />
+
+#### AABB collision detection
 
 AABB (Axis-Aligned Bounding Box) collision check는, 단순히 entity를 감싼 collider 가 겹치는 가를 확인하는 로직이다.
 
