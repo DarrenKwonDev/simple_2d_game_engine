@@ -11,6 +11,7 @@
         -   [Determinism](#determinism)
         -   [ECS(Entity Component System)](#ecsentity-component-system)
             -   [component의 memory contiguous한 배치와 Pool](#component의-memory-contiguous한-배치와-pool)
+        -   [비동기 프로그래밍과 event system](#비동기-프로그래밍과-event-system)
         -   [collision check](#collision-check)
             -   [circle collision detection](#circle-collision-detection)
             -   [AABB collision detection](#aabb-collision-detection)
@@ -160,6 +161,13 @@ Pool의 구현은 단순히 memory contiguous한 자료구조(vector, array, ...
 | Entity 1           | CompA |       | CompC |
 | Entity 2           | CompA | CompB |       |
 | Entity 3           | CompA | CompB | CompC |
+
+### 비동기 프로그래밍과 event system
+
+지금까지 프로그래밍을 해오면서 다양한 비동기 프로그래밍 패턴을 접한 적이 있다.
+generator, generator의 syntax sugar격인 async/await 구문, promise(future), event driven, callback, reactive(rx) 등이 존재하고 이를 구현한 언어의 특성에 따라 자주 사용되는 패턴이 다르다.
+
+이 엔진에서는 event system으로 구현한다.
 
 ### collision check
 
