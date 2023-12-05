@@ -8,6 +8,7 @@ BreakBeforeBraces: Attach
 BinPackParameters: false
 BinPackArguments: false
 AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
 AlignAfterOpenBracket: Align
 IndentCaseLabels: false
 ColumnLimit: 120

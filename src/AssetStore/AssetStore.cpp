@@ -6,7 +6,9 @@
 #include "../Logger/Logger.h"
 #include "AssetStore.h"
 
-AssetStore::AssetStore() { Logger::Log("asset store constructor called"); }
+AssetStore::AssetStore() {
+    Logger::Log("asset store constructor called");
+}
 AssetStore::~AssetStore() {
     AssetStore::ClearAssets();
     Logger::Log("asset store deconstructor called");

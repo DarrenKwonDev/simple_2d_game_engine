@@ -10,19 +10,27 @@ int IComponent::nextId = 0;
 // entity
 ////////////////////////////////////////////////////////
 
-Entity::Entity(int id) : mId(id) {}
+Entity::Entity(int id) : mId(id) {
+}
 
-Entity::~Entity() {}
+Entity::~Entity() {
+}
 
-int Entity::GetId() const { return this->mId; }
+int Entity::GetId() const {
+    return this->mId;
+}
 
 ////////////////////////////////////////////////////////
 // registry
 ////////////////////////////////////////////////////////
 
-Registry::Registry() { Logger::Log("create registry"); }
+Registry::Registry() {
+    Logger::Log("create registry");
+}
 
-Registry::~Registry() { Logger::Log("deconstruct registry"); }
+Registry::~Registry() {
+    Logger::Log("deconstruct registry");
+}
 
 // temp set에 대기 중인 entity를 system에 등록한다.
 void Registry::Update() {
@@ -77,7 +85,9 @@ void Registry::AddEntityToSystems(Entity entity) {
 // system
 ////////////////////////////////////////////////////////
 
-void System::AddEntityToSystem(Entity entity) { mEntities.push_back(entity); }
+void System::AddEntityToSystem(Entity entity) {
+    mEntities.push_back(entity);
+}
 
 void System::RemoveEntityFromSystem(Entity entity) {
     // https://en.cppreference.com/w/cpp/algorithm/remove
@@ -90,6 +100,10 @@ void System::RemoveEntityFromSystem(Entity entity) {
         mEntities.end());
 }
 
-std::vector<Entity> System::GetSystemEntities() const { return mEntities; }
+std::vector<Entity> System::GetSystemEntities() const {
+    return mEntities;
+}
 
-const Signature& System::GetComponentSignature() const { return mSysRequiredComponentSignature; }
+const Signature& System::GetComponentSignature() const {
+    return mSysRequiredComponentSignature;
+}

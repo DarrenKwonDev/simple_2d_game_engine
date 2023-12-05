@@ -68,10 +68,18 @@ public:
     Entity(const Entity& rhs) = default;        // 복사 생성
     Entity& operator=(const Entity&) = default; // 복사 대입 연산
 
-    bool operator==(const Entity& rhs) const { return mId == rhs.mId; };
-    bool operator!=(const Entity& rhs) const { return mId != rhs.mId; };
-    bool operator>(const Entity& rhs) const { return mId > rhs.mId; };
-    bool operator<(const Entity& rhs) const { return mId < rhs.mId; };
+    bool operator==(const Entity& rhs) const {
+        return mId == rhs.mId;
+    };
+    bool operator!=(const Entity& rhs) const {
+        return mId != rhs.mId;
+    };
+    bool operator>(const Entity& rhs) const {
+        return mId > rhs.mId;
+    };
+    bool operator<(const Entity& rhs) const {
+        return mId < rhs.mId;
+    };
 };
 
 ////////////////////////////////////////////////////////
@@ -123,18 +131,36 @@ private:
     std::vector<T> data;
 
 public:
-    Pool(int size = 100) { data.resize(size); };
+    Pool(int size = 100) {
+        data.resize(size);
+    };
     virtual ~Pool() = default;
 
-    T& operator[](unsigned int index) { return data[index]; }
+    T& operator[](unsigned int index) {
+        return data[index];
+    }
 
-    bool isEmpty() const { return data.empty(); }
-    int GetSize() const { return data.size(); }
-    void Resize(int n) { data.resize(n); }
-    void Clear() { data.clear(); }
-    void Add(const T object) { data.push_back(object); }
-    void Set(int index, const T object) { data[index] = object; }
-    T& Get(int index) { return static_cast<T&>(data[index]); }
+    bool isEmpty() const {
+        return data.empty();
+    }
+    int GetSize() const {
+        return data.size();
+    }
+    void Resize(int n) {
+        data.resize(n);
+    }
+    void Clear() {
+        data.clear();
+    }
+    void Add(const T object) {
+        data.push_back(object);
+    }
+    void Set(int index, const T object) {
+        data[index] = object;
+    }
+    T& Get(int index) {
+        return static_cast<T&>(data[index]);
+    }
 };
 
 ////////////////////////////////////////////////////////
@@ -327,7 +353,9 @@ template <typename TComponent, typename... TArgs> inline void Entity::AddCompone
     mRegistry->AddComponent<TComponent>(*this, std::forward<TArgs>(args)...);
 }
 
-template <typename TComponent> inline void Entity::RemoveComponent() { mRegistry->RemoveComponent<TComponent>(*this); }
+template <typename TComponent> inline void Entity::RemoveComponent() {
+    mRegistry->RemoveComponent<TComponent>(*this);
+}
 
 template <typename TComponent> inline bool Entity::HasComponent() const {
     return mRegistry->HasComponent<TComponent>(*this);

@@ -30,7 +30,9 @@ Game::Game() {
     Logger::Log("Game constructor called");
 }
 
-Game::~Game() { Logger::Log("Game deconstructor called"); }
+Game::~Game() {
+    Logger::Log("Game deconstructor called");
+}
 
 void Game::Initialize() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -187,7 +189,9 @@ void Game::LoadLevel(int level) {
 }
 
 // one time setup
-void Game::Setup() { Game::LoadLevel(1); }
+void Game::Setup() {
+    Game::LoadLevel(1);
+}
 
 // called every frame
 void Game::Update() {
