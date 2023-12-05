@@ -10,3 +10,6 @@ videoCheck
 # clangd
 .cache
 compile_commands.json
+
+# node
+node_modules

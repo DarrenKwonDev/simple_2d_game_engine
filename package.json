@@ -1,0 +1,20 @@
+{
+    "name": "2d-game-engine-poc",
+    "version": "1.0.0",
+    "main": "index.js",
+    "description": "simple 2d game engine",
+    "directories": {
+        "doc": "docs"
+    },
+    "scripts": {
+        "prepare": "husky install",
+        "clang-format": "sh ./scripts/format_code.sh",
+        "make-toc": "sh ./scripts/make_toc.sh"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "husky": "^8.0.0"
+    }
+}

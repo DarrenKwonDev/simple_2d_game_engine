@@ -7,11 +7,13 @@
 
 #include "glm/glm.hpp"
 
+#include "../Components/AnimationComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/SpriteComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../ECS/ECS.h"
 #include "../Logger/Logger.h"
+#include "../Systems/AnimationSystem.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/RenderSystem.h"
 #include "Game.h"
@@ -107,10 +109,12 @@ void Game::LoadLevel(int level) {
     // add system
     mRegistry->AddSystem<MovementSystem>();
     mRegistry->AddSystem<RenderSystem>();
+    mRegistry->AddSystem<AnimationSystem>();
 
     // add texture
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
     mAssetStore->AddTexture(mRenderer, "truck-image", "./assets/images/truck-ford-right.png");
+    mAssetStore->AddTexture(mRenderer, "chopper-image", "./assets/images/chopper.png");
 
     // tilemap
     mAssetStore->AddTexture(mRenderer, "tilemap-image", "./assets/tilemaps/jungle.png");
@@ -153,6 +157,12 @@ void Game::LoadLevel(int level) {
     mapFile.close();
 
     // create entity and add component
+    Entity chopper = mRegistry->CreateEntity();
+    chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 45.0);
+    chopper.AddComponent<RigidBodyComponent>(glm::vec2(80.0, 00.0));
+    chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
+    chopper.AddComponent<AnimationComponent>(2, 5, true);
+
     Entity tank = mRegistry->CreateEntity();
     tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 45.0);
     tank.AddComponent<RigidBodyComponent>(glm::vec2(80.0, 00.0));
@@ -205,6 +215,7 @@ void Game::Render() {
     SDL_RenderClear(mRenderer); // clears the entire rendering target
 
     mRegistry->GetSystem<RenderSystem>().Update(mRenderer, mAssetStore);
+    mRegistry->GetSystem<AnimationSystem>().Update();
 
     // present. (as double buffered renderer, swap back/front buffer)
     SDL_RenderPresent(mRenderer);

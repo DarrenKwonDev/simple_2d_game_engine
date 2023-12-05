@@ -14,6 +14,9 @@
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "macos-clang-arm64",
+            // BELOW IS DEPRECATED
+            // use clangd instead.
+
             // "ms-vscode.cmake-tools"와 "ms-vscode.makefile-tools"는 각각 CMake와 Makefile 기반의 프로젝트 설정을 자동으로 처리
             // 즉, provider에 따라, VScode에서 config의 includePath를 읽는 것이 아니라 CMakeLists.txt나 makefiles에 정의된 include 정보를 사용하게 된다.
             // "configurationProvider": "ms-vscode.cmake-tools"
