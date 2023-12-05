@@ -41,8 +41,8 @@ void Game::Initialize() {
     mWindowHeight = displayMode.h;
 
     // create window
-    mWindow = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWindowWidth, mWindowHeight,
-                               SDL_WINDOW_BORDERLESS);
+    mWindow = SDL_CreateWindow(
+        NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWindowWidth, mWindowHeight, SDL_WINDOW_BORDERLESS);
 
     if (!mWindow) {
         Logger::Err("Error creating SDL window");
@@ -137,7 +137,8 @@ void Game::LoadLevel(int level) {
 
             Entity tile = mRegistry->CreateEntity();
             tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
-                                                  glm::vec2(tileScale, tileScale), 0.0);
+                                                  glm::vec2(tileScale, tileScale),
+                                                  0.0);
 
             // tilemap-image의 x, y 좌표에 의해 렌더링 함.
             // tilemap-image의 배치는 다음과 같음.

@@ -5,7 +5,10 @@ BasedOnStyle: LLVM
 IndentWidth: 4
 TabWidth: 4
 BreakBeforeBraces: Attach
+BinPackParameters: false
+BinPackArguments: false
 AllowShortIfStatementsOnASingleLine: false
+AlignAfterOpenBracket: Align
 IndentCaseLabels: false
 ColumnLimit: 120
 AccessModifierOffset: -4
