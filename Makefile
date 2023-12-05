@@ -54,10 +54,13 @@ videoCheck:
 	-o videoCheck \
 	&& ./videoCheck
 
+compile_commands.json:
+	rm compile_commands.json && bear -- make build
+
 run:
 	./$(EXECUTABLE_NAME)
 
 clean:
 	rm -f $(EXECUTABLE_NAME)
 
-.PHONY: all build run clean verbose videoCheck
+.PHONY: all build run clean verbose videoCheck compile_commands.json
