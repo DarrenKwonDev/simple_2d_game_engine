@@ -14,7 +14,9 @@
 #include "../Systems/AnimationSystem.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/RenderSystem.h"
+#include "Components/BoxColliderComponent.h"
 #include "Game.h"
+#include "Systems/CollisionSystem.h"
 
 using namespace std;
 
@@ -102,6 +104,7 @@ void Game::LoadLevel(int level) {
     mRegistry->AddSystem<MovementSystem>();
     mRegistry->AddSystem<RenderSystem>();
     mRegistry->AddSystem<AnimationSystem>();
+    mRegistry->AddSystem<CollisionSystem>();
 
     // add texture
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
@@ -161,14 +164,16 @@ void Game::LoadLevel(int level) {
     radar.AddComponent<AnimationComponent>(8, 5, true);
 
     Entity tank = mRegistry->CreateEntity();
-    tank.AddComponent<TransformComponent>(glm::vec2(50.0, 30.0), glm::vec2(1.0, 1.0), 45.0);
-    tank.AddComponent<RigidBodyComponent>(glm::vec2(80.0, 00.0));
+    tank.AddComponent<TransformComponent>(glm::vec2(200.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
+    tank.AddComponent<RigidBodyComponent>(glm::vec2(-30.0, 00.0));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
+    tank.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
 
     Entity truck = mRegistry->CreateEntity();
-    truck.AddComponent<TransformComponent>(glm::vec2(160.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+    truck.AddComponent<TransformComponent>(glm::vec2(10.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     truck.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 00.0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 10);
+    truck.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
 
     // tank.RemoveComponent<TransformComponent>();
 }
@@ -211,6 +216,7 @@ void Game::Render() {
 
     mRegistry->GetSystem<RenderSystem>().Update(mRenderer, mAssetStore);
     mRegistry->GetSystem<AnimationSystem>().Update();
+    mRegistry->GetSystem<CollisionSystem>().Update();
 
     // present. (as double buffered renderer, swap back/front buffer)
     SDL_RenderPresent(mRenderer);

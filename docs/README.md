@@ -11,6 +11,8 @@
         -   [Determinism](#determinism)
         -   [ECS(Entity Component System)](#ecsentity-component-system)
             -   [component의 memory contiguous한 배치와 Pool](#component의-memory-contiguous한-배치와-pool)
+        -   [collision check](#collision-check)
+            -   [AABB collision check](#aabb-collision-check)
     -   [SLD2](#sld2)
         -   [paths](#paths)
         -   [full screen, fake full screen](#full-screen-fake-full-screen)
@@ -157,6 +159,23 @@ Pool의 구현은 단순히 memory contiguous한 자료구조(vector, array, ...
 | Entity 1           | CompA |       | CompC |
 | Entity 2           | CompA | CompB |       |
 | Entity 3           | CompA | CompB | CompC |
+
+### collision check
+
+이 엔진에선 box collider로 감싼 entity의 충돌을 AABB collision check로 확인함.
+
+#### AABB collision check
+
+AABB (Axis-Aligned Bounding Box) collision check는, 단순히 entity를 감싼 collider 가 겹치는 가를 확인하는 로직이다.
+
+박스 A, 박스 B가 존재한다고 가정할 때 두 영역이 충돌(영역 겹침) 확인 조건.
+
+<img src="./imgs/AABB.jpeg" />
+
+1. A의 최대 X 좌표(A.x + A.width)가 B의 최소 X 좌표(B.x)보다 커야 함
+2. A의 최소 X 좌표(A.x)가 B의 최대 X 좌표(B.x + B.width)보다 작아야 함
+3. A의 최대 Y 좌표(A.y + A.height)가 B의 최소 Y 좌표(B.height)보다 커야 함
+4. A의 최소 Y 좌표(A.y)가 B의 최대 Y 좌표(B.y + B.height)보다 작아야 함
 
 ## SLD2
 
