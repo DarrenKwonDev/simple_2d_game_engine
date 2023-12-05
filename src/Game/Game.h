@@ -9,7 +9,8 @@
 
 class Game {
 private:
-    bool mIsRunning;                // check window and renderer is setted.
+    bool mIsRunning; // check window and renderer is setted.
+    bool mIsDebug;
     uint32_t millisecPrevFrame = 0; // derived from SDL_GetTicks()
 
     // SDL is C library. expect raw ptr

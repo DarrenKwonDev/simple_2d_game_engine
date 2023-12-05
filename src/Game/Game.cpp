@@ -16,12 +16,15 @@
 #include "../Systems/RenderSystem.h"
 #include "Components/BoxColliderComponent.h"
 #include "Game.h"
+#include "SDL2/SDL_keycode.h"
 #include "Systems/CollisionSystem.h"
+#include "Systems/RenderColliderSystem.h"
 
 using namespace std;
 
 Game::Game() {
     mIsRunning = false;
+    mIsDebug = false;
     mRegistry = std::make_unique<Registry>();
     mAssetStore = std::make_unique<AssetStore>();
     Logger::Log("Game constructor called");
@@ -91,6 +94,9 @@ void Game::ProcessInput() {
             if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
                 mIsRunning = false;
             };
+            if (sdlEvent.key.keysym.sym == SDLK_d) {
+                mIsDebug = !mIsDebug;
+            }
             break;
 
         default:
@@ -105,6 +111,7 @@ void Game::LoadLevel(int level) {
     mRegistry->AddSystem<RenderSystem>();
     mRegistry->AddSystem<AnimationSystem>();
     mRegistry->AddSystem<CollisionSystem>();
+    mRegistry->AddSystem<RenderColliderSystem>();
 
     // add texture
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
@@ -218,6 +225,10 @@ void Game::Render() {
     mRegistry->GetSystem<RenderSystem>().Update(mRenderer, mAssetStore);
     mRegistry->GetSystem<AnimationSystem>().Update();
     mRegistry->GetSystem<CollisionSystem>().Update();
+
+    if (mIsDebug) {
+        mRegistry->GetSystem<RenderColliderSystem>().Update(mRenderer);
+    }
 
     // present. (as double buffered renderer, swap back/front buffer)
     SDL_RenderPresent(mRenderer);
