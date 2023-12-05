@@ -119,9 +119,10 @@ void System::RemoveEntityFromSystem(Entity entity) {
     // 반환하는 것은, 이동된 요소들의 시작 지점이다.
     // 실제로 값이 지워지지는 않기에 erase가 요구된다.
     // remove(if), erase idiom은 직관적이지 않지만 관습이다.
-    mEntities.erase(
-        std::remove_if(mEntities.begin(), mEntities.end(), [&entity](Entity elem) { return entity == elem; }),
-        mEntities.end());
+    mEntities.erase(std::remove_if(mEntities.begin(),
+                                   mEntities.end(),
+                                   [&entity](Entity elem) { return entity == elem; }),
+                    mEntities.end());
 }
 
 std::vector<Entity> System::GetSystemEntities() const {
