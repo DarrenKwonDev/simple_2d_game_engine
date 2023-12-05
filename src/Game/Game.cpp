@@ -155,19 +155,19 @@ void Game::LoadLevel(int level) {
     chopper.AddComponent<AnimationComponent>(2, 15, true); // it has 2 frame and render five frame per sec
 
     Entity radar = mRegistry->CreateEntity();
-    radar.AddComponent<TransformComponent>(glm::vec2(500.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
+    radar.AddComponent<TransformComponent>(glm::vec2(mWindowWidth - 74, 32), glm::vec2(1.0, 1.0), 0.0);
     radar.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
     radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 2);
     radar.AddComponent<AnimationComponent>(8, 5, true);
 
     Entity tank = mRegistry->CreateEntity();
-    tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 45.0);
+    tank.AddComponent<TransformComponent>(glm::vec2(50.0, 30.0), glm::vec2(1.0, 1.0), 45.0);
     tank.AddComponent<RigidBodyComponent>(glm::vec2(80.0, 00.0));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
 
     Entity truck = mRegistry->CreateEntity();
-    truck.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
-    truck.AddComponent<RigidBodyComponent>(glm::vec2(80.0, 00.0));
+    truck.AddComponent<TransformComponent>(glm::vec2(160.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+    truck.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 00.0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 10);
 
     // tank.RemoveComponent<TransformComponent>();
