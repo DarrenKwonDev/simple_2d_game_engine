@@ -15,10 +15,12 @@
 #include "../Systems/MovementSystem.h"
 #include "../Systems/RenderSystem.h"
 #include "Components/BoxColliderComponent.h"
+#include "Events/KeyPressedEvent.h"
 #include "Game.h"
 #include "SDL2/SDL_keycode.h"
 #include "Systems/CollisionSystem.h"
 #include "Systems/DamageSystem.h"
+#include "Systems/KeyboardControlSystem.h"
 #include "Systems/RenderColliderSystem.h"
 
 using namespace std;
@@ -29,6 +31,7 @@ Game::Game() {
     mRegistry = std::make_unique<Registry>();
     mAssetStore = std::make_unique<AssetStore>();
     mEventBus = std::make_unique<EventBus>();
+
     Logger::Log("Game constructor called");
 }
 
@@ -95,6 +98,9 @@ void Game::ProcessInput() {
             break;
 
         case SDL_KEYDOWN:
+
+            mEventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
+
             if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
                 mIsRunning = false;
             };
@@ -117,6 +123,7 @@ void Game::LoadLevel(int level) {
     mRegistry->AddSystem<CollisionSystem>();
     mRegistry->AddSystem<RenderColliderSystem>();
     mRegistry->AddSystem<DamageSystem>();
+    mRegistry->AddSystem<KeyboardControlSystem>();
 
     // add texture
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
@@ -182,8 +189,6 @@ void Game::LoadLevel(int level) {
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
     tank.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
 
-    // tank.Kill(); // tank will not appear
-
     Entity truck = mRegistry->CreateEntity();
     truck.AddComponent<TransformComponent>(glm::vec2(10.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     truck.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 00.0));
@@ -218,6 +223,7 @@ void Game::Update() {
 
     // re subscribe
     mRegistry->GetSystem<DamageSystem>().SubscribeToEvents(mEventBus);
+    mRegistry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(mEventBus);
 
     // system update
     mRegistry->GetSystem<MovementSystem>().Update(deltaTime);
