@@ -2,6 +2,7 @@
 
 #include "../AssetStore/AssetStore.h"
 #include "../ECS/ECS.h"
+#include "EventBus/EventBus.h"
 #include <SDL2/SDL.h>
 
 #define FPS (60)
@@ -19,6 +20,7 @@ private:
 
     std::unique_ptr<Registry> mRegistry; // class에서 선언한 smart ptr 멤버 변수는 deconstruct될 때 수거 된다.
     std::unique_ptr<AssetStore> mAssetStore;
+    std::unique_ptr<EventBus> mEventBus;
 
 public:
     Game();

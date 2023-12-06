@@ -128,8 +128,7 @@ inline void System::RequireComponent() {
 ////////////////////////////////////////////////////////
 
 // IPool을 사용함으로써 Pool 객체들을 그들의 구체적인 유형(T)에 관계없이 다룰 수 있게 됨.
-// Pool을 제네릭으로 받아야 하는 경우에 유용함.
-// 예를 들어, std::vector<IPool*> componentPools; 와 같은 경우.
+// 이 경우엔 template class를 또다른 곳에서 template으로 받아야 하는 상황이라서.
 struct IPool {
 public:
     virtual ~IPool(){};
