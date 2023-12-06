@@ -3,6 +3,9 @@
 #include "Components/BoxColliderComponent.h"
 #include "Components/TransformComponent.h"
 #include "ECS/ECS.h"
+#include "EventBus/EventBus.h"
+#include "Events/CollisionEvent.h"
+#include <memory>
 #include <string>
 
 class CollisionSystem : public System {
@@ -12,7 +15,7 @@ public:
         RequireComponent<TransformComponent>();
     }
 
-    void Update() {
+    void Update(std::unique_ptr<EventBus>& eventBus) {
 
         // AABB collision check.
         auto entities = GetSystemEntities();
@@ -38,9 +41,7 @@ public:
                     Logger::Log("entity " + std::to_string(a.GetId()) + " colliding with entity " +
                                 std::to_string(b.GetId()));
 
-                    // TODO: do something when two entity collided.
-                    // a.Kill();
-                    // b.Kill();
+                    eventBus->EmitEvent<CollisionEvent>(a, b);
                 }
             }
         }

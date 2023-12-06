@@ -66,6 +66,11 @@ public:
         Logger::Log("event bus deconstructor called");
     };
 
+    // map을 비움으로써 모든 이벤트 cb를 삭제합니다.
+    void Reset() {
+        mSubscribers.clear();
+    }
+
     // 특정 이벤트를 구독합니다.
     // void (TOwner::*callbackFunction)(TEvent&)를 left-right rule에 의해 해석해보자면
     // TOwner::callbackFunction is a pointer to (TEvent&) -> void

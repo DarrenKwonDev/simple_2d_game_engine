@@ -18,6 +18,7 @@
 #include "Game.h"
 #include "SDL2/SDL_keycode.h"
 #include "Systems/CollisionSystem.h"
+#include "Systems/DamageSystem.h"
 #include "Systems/RenderColliderSystem.h"
 
 using namespace std;
@@ -27,6 +28,7 @@ Game::Game() {
     mIsDebug = false;
     mRegistry = std::make_unique<Registry>();
     mAssetStore = std::make_unique<AssetStore>();
+    mEventBus = std::make_unique<EventBus>();
     Logger::Log("Game constructor called");
 }
 
@@ -114,6 +116,7 @@ void Game::LoadLevel(int level) {
     mRegistry->AddSystem<AnimationSystem>();
     mRegistry->AddSystem<CollisionSystem>();
     mRegistry->AddSystem<RenderColliderSystem>();
+    mRegistry->AddSystem<DamageSystem>();
 
     // add texture
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
@@ -210,12 +213,19 @@ void Game::Update() {
 
     millisecPrevFrame = SDL_GetTicks();
 
+    // clear all event cb
+    mEventBus->Reset();
+
+    // re subscribe
+    mRegistry->GetSystem<DamageSystem>().SubscribeToEvents(mEventBus);
+
     // system update
     mRegistry->GetSystem<MovementSystem>().Update(deltaTime);
+    mRegistry->GetSystem<AnimationSystem>().Update();
+    mRegistry->GetSystem<CollisionSystem>().Update(mEventBus);
 
     // system update를 마친후 생성, 삭제 대기 중인 entity를
     // 다음 tick update에 반영하기 위해 system에 등록
-    // 이 함수의 특성상 최하단에 호출되어야 함
     mRegistry->Update();
 }
 
@@ -227,8 +237,6 @@ void Game::Render() {
     SDL_RenderClear(mRenderer); // clears the entire rendering target
 
     mRegistry->GetSystem<RenderSystem>().Update(mRenderer, mAssetStore);
-    mRegistry->GetSystem<AnimationSystem>().Update();
-    mRegistry->GetSystem<CollisionSystem>().Update();
 
     if (mIsDebug) {
         mRegistry->GetSystem<RenderColliderSystem>().Update(mRenderer);
