@@ -11,7 +11,8 @@
         -   [Determinism](#determinism)
         -   [ECS(Entity Component System)](#ecsentity-component-system)
             -   [component의 memory contiguous한 배치와 Pool](#component의-memory-contiguous한-배치와-pool)
-        -   [비동기 프로그래밍과 event system](#비동기-프로그래밍과-event-system)
+        -   [event system](#event-system)
+            -   [비동기 프로그래밍과 pub-sub](#비동기-프로그래밍과-pub-sub)
         -   [collision check](#collision-check)
             -   [circle collision detection](#circle-collision-detection)
             -   [AABB collision detection](#aabb-collision-detection)
@@ -162,12 +163,28 @@ Pool의 구현은 단순히 memory contiguous한 자료구조(vector, array, ...
 | Entity 2           | CompA | CompB |       |
 | Entity 3           | CompA | CompB | CompC |
 
-### 비동기 프로그래밍과 event system
+### event system
 
-지금까지 프로그래밍을 해오면서 다양한 비동기 프로그래밍 패턴을 접한 적이 있다.
-generator, generator의 syntax sugar격인 async/await 구문, promise(future), event driven, callback, reactive(rx) 등이 존재하고 이를 구현한 언어의 특성에 따라 자주 사용되는 패턴이 다르다.
+#### 비동기 프로그래밍과 pub-sub
 
-이 엔진에서는 event system으로 구현한다.
+비동기 프로그래밍을 구현하는 패턴으로 다음과 같은 것을 들 수 있겠다.
+
+-   coroutine, generator
+    -   python 이야기를 하자면, coroutine(generator based), native coroutine(async/await)로 분리할 수 있겠다.
+    -   javascript의 generator는 엄밀히 말하자면 coroutine은 아니다. sub routine간의 양방향 전환이 안되기 때문에 제한된 coroutine이다.
+-   promise(future)
+-   callback
+    -   그것이 event loop를 타는 것이든(node, python) 단순히 함수 포인터로 호출하는 방식이든(c/cpp)
+-   reactive programming(rx)
+-   observer pattern
+    -   엄밀히 이야기하면, pub-sub과는 조금 다르다. pubsub은 event channel(이벤트 버스)를 통해 이벤트를 전달하는 것이고, observer pattern은 subject가 observer에게 직접 이벤트를 전달하는 것이다.
+
+거칠게 요약하자면 비동기 프로그래밍은 pub-sub 패턴의 변형이다.
+본 엔진에서 구현되는 이벤트 시스템도 pub-sub 패턴의 변형이다.
+
+어떠한 topic에 대해 subscribe하고 어떤 동작을 지정하면,
+eventBus가 각 이벤트의 리스너와 콜백의 목록을 관리하고, 이벤트를 전송하는 역할을 한다.
+그리고 이벤트 emit(publish) 되는 시점에 동작이 실행된다.
 
 ### collision check
 
@@ -292,4 +309,6 @@ OTF는 TTF보다 더 많은 기능을 제공하는 대신 더 큰 용량을 차�
 ## resources
 
 -   [SDL 프로그래밍 컴플리트 가이드](https://wikidocs.net/book/6636)
-    https://gafferongames.com/post/fix_your_timestep/
+-   https://gafferongames.com/post/fix_your_timestep/
+-   https://denyskryvytskyi.github.io/event-system
+-   https://gameprogrammingpatterns.com/contents.html
