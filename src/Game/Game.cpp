@@ -15,10 +15,12 @@
 #include "../Systems/MovementSystem.h"
 #include "../Systems/RenderSystem.h"
 #include "Components/BoxColliderComponent.h"
+#include "Components/CameraFollowComponent.h"
 #include "Components/KeyboardControlComponent.h"
 #include "Events/KeyPressedEvent.h"
 #include "Game.h"
 #include "SDL2/SDL_keycode.h"
+#include "Systems/CameraMovementSystem.h"
 #include "Systems/CollisionSystem.h"
 #include "Systems/DamageSystem.h"
 #include "Systems/KeyboardControlSystem.h"
@@ -26,6 +28,11 @@
 #include "glm/fwd.hpp"
 
 using namespace std;
+
+int Game::mWindowWidth;
+int Game::mWindowHeight;
+int Game::mMapWidth;
+int Game::mMapHeight;
 
 Game::Game() {
     mIsRunning = false;
@@ -74,6 +81,14 @@ void Game::Initialize() {
 
     // SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
 
+    // set camera
+    Logger::Log("camera initialized");
+    mCamera.x = 0;
+    mCamera.y = 0;
+    mCamera.w = mWindowWidth;
+    mCamera.h = mWindowHeight;
+
+    // game loop running
     mIsRunning = true;
 }
 
@@ -126,6 +141,7 @@ void Game::LoadLevel(int level) {
     mRegistry->AddSystem<RenderColliderSystem>();
     mRegistry->AddSystem<DamageSystem>();
     mRegistry->AddSystem<KeyboardControlSystem>();
+    mRegistry->AddSystem<CameraMovementSystem>();
 
     // add texture
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
@@ -136,7 +152,7 @@ void Game::LoadLevel(int level) {
     // tilemap
     mAssetStore->AddTexture(mRenderer, "tilemap-image", "./assets/tilemaps/jungle.png");
     int tileSize = 32; // 32 pixel
-    double tileScale = 1.0;
+    double tileScale = 2.0;
     int mapNumCols = 25;
     int mapNumRows = 20;
 
@@ -172,16 +188,20 @@ void Game::LoadLevel(int level) {
 
     mapFile.close();
 
+    mMapWidth = mapNumCols * tileSize * tileScale;
+    mMapHeight = mapNumRows * tileSize * tileScale;
+
     // create entity and add component
     Entity chopper = mRegistry->CreateEntity();
-    chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+    chopper.AddComponent<TransformComponent>(glm::vec2(50.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     chopper.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
     chopper.AddComponent<AnimationComponent>(2, 15, true); // it has 2 frame and render five frame per sec
-    chopper.AddComponent<KeyboardControlComponent>(glm::vec2(0, -80),
-                                                   glm::vec2(80, 0),
-                                                   glm::vec2(0, 80),
-                                                   glm::vec2(-80, 0));
+    chopper.AddComponent<KeyboardControlComponent>(glm::vec2(0, -200),
+                                                   glm::vec2(200, 0),
+                                                   glm::vec2(0, 200),
+                                                   glm::vec2(-200, 0));
+    chopper.AddComponent<CameraFollowComponent>();
 
     Entity radar = mRegistry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(mWindowWidth - 74, 32), glm::vec2(1.0, 1.0), 0.0);
@@ -235,6 +255,7 @@ void Game::Update() {
     mRegistry->GetSystem<MovementSystem>().Update(deltaTime);
     mRegistry->GetSystem<AnimationSystem>().Update();
     mRegistry->GetSystem<CollisionSystem>().Update(mEventBus);
+    mRegistry->GetSystem<CameraMovementSystem>().Update(mCamera);
 
     // system update를 마친후 생성, 삭제 대기 중인 entity를
     // 다음 tick update에 반영하기 위해 system에 등록
@@ -248,7 +269,7 @@ void Game::Render() {
     SDL_SetRenderDrawColor(mRenderer, 153, 153, 153, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(mRenderer); // clears the entire rendering target
 
-    mRegistry->GetSystem<RenderSystem>().Update(mRenderer, mAssetStore);
+    mRegistry->GetSystem<RenderSystem>().Update(mRenderer, mAssetStore, mCamera);
 
     if (mIsDebug) {
         mRegistry->GetSystem<RenderColliderSystem>().Update(mRenderer);

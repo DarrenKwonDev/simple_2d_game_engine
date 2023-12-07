@@ -17,7 +17,7 @@ public:
         RequireComponent<SpriteComponent>();
     };
 
-    void Update(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore) {
+    void Update(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore, SDL_Rect& camera) {
         struct RenderableEntity {
             TransformComponent transformComp;
             SpriteComponent spriteComp;
@@ -49,8 +49,9 @@ public:
 
             SDL_Rect srcRect = sprite.mSrcRect;
 
-            SDL_Rect dstRect = {static_cast<int>(transform.mPosition.x),
-                                static_cast<int>(transform.mPosition.y),
+            // if camera rect move, all entity should be move too!
+            SDL_Rect dstRect = {static_cast<int>(transform.mPosition.x - camera.x),
+                                static_cast<int>(transform.mPosition.y - camera.y),
                                 static_cast<int>(sprite.mWidth * transform.mScale.x),
                                 static_cast<int>(sprite.mHeight * transform.mScale.y)};
 
