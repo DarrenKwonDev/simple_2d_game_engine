@@ -8,6 +8,6 @@ class KeyPressedEvent : public Event {
 private:
 public:
     SDL_KeyCode mSymbol;
-    KeyPressedEvent(int symbol) : mSymbol(static_cast<SDL_KeyCode>(symbol)){};
+    KeyPressedEvent(int symbolAsNum) : mSymbol(static_cast<SDL_KeyCode>(symbolAsNum)){};
     KeyPressedEvent(SDL_KeyCode symbol) : mSymbol(symbol){};
 };

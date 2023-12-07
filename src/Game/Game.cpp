@@ -15,6 +15,7 @@
 #include "../Systems/MovementSystem.h"
 #include "../Systems/RenderSystem.h"
 #include "Components/BoxColliderComponent.h"
+#include "Components/KeyboardControlComponent.h"
 #include "Events/KeyPressedEvent.h"
 #include "Game.h"
 #include "SDL2/SDL_keycode.h"
@@ -22,6 +23,7 @@
 #include "Systems/DamageSystem.h"
 #include "Systems/KeyboardControlSystem.h"
 #include "Systems/RenderColliderSystem.h"
+#include "glm/fwd.hpp"
 
 using namespace std;
 
@@ -128,7 +130,7 @@ void Game::LoadLevel(int level) {
     // add texture
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
     mAssetStore->AddTexture(mRenderer, "truck-image", "./assets/images/truck-ford-right.png");
-    mAssetStore->AddTexture(mRenderer, "chopper-image", "./assets/images/chopper.png");
+    mAssetStore->AddTexture(mRenderer, "chopper-image", "./assets/images/chopper-spritesheet.png");
     mAssetStore->AddTexture(mRenderer, "radar-image", "./assets/images/radar.png");
 
     // tilemap
@@ -176,6 +178,10 @@ void Game::LoadLevel(int level) {
     chopper.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
     chopper.AddComponent<AnimationComponent>(2, 15, true); // it has 2 frame and render five frame per sec
+    chopper.AddComponent<KeyboardControlComponent>(glm::vec2(0, -80),
+                                                   glm::vec2(80, 0),
+                                                   glm::vec2(0, 80),
+                                                   glm::vec2(-80, 0));
 
     Entity radar = mRegistry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(mWindowWidth - 74, 32), glm::vec2(1.0, 1.0), 0.0);
