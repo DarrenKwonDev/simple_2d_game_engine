@@ -210,7 +210,7 @@ void Game::LoadLevel(int level) {
     radar.AddComponent<AnimationComponent>(8, 5, true);
 
     Entity tank = mRegistry->CreateEntity();
-    tank.AddComponent<TransformComponent>(glm::vec2(200.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
+    tank.AddComponent<TransformComponent>(glm::vec2(400.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     tank.AddComponent<RigidBodyComponent>(glm::vec2(-30.0, 00.0));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
     tank.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
@@ -272,7 +272,7 @@ void Game::Render() {
     mRegistry->GetSystem<RenderSystem>().Update(mRenderer, mAssetStore, mCamera);
 
     if (mIsDebug) {
-        mRegistry->GetSystem<RenderColliderSystem>().Update(mRenderer);
+        mRegistry->GetSystem<RenderColliderSystem>().Update(mRenderer, mCamera);
     }
 
     // present. (as double buffered renderer, swap back/front buffer)
