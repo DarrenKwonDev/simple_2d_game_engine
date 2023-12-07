@@ -79,7 +79,7 @@ void Game::Initialize() {
         return;
     }
 
-    // SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
+    SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
 
     // set camera
     Logger::Log("camera initialized");
@@ -182,7 +182,7 @@ void Game::LoadLevel(int level) {
             // 0 1 2 3 4 5 6 7 8 9
             // 10 11 12 13 14 15 16 17 18 19
             // 20 21 22 23 24 25 26 27 28 29
-            tile.AddComponent<SpriteComponent>("tilemap-image", tileSize, tileSize, 0, srcRectX, srcRectY);
+            tile.AddComponent<SpriteComponent>("tilemap-image", tileSize, tileSize, 0, false, srcRectX, srcRectY);
         }
     }
 
@@ -206,7 +206,7 @@ void Game::LoadLevel(int level) {
     Entity radar = mRegistry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(mWindowWidth - 74, 32), glm::vec2(1.0, 1.0), 0.0);
     radar.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
-    radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 2);
+    radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 2, true);
     radar.AddComponent<AnimationComponent>(8, 5, true);
 
     Entity tank = mRegistry->CreateEntity();

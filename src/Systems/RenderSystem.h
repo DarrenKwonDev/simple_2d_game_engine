@@ -50,8 +50,8 @@ public:
             SDL_Rect srcRect = sprite.mSrcRect;
 
             // if camera rect move, all entity should be move too!
-            SDL_Rect dstRect = {static_cast<int>(transform.mPosition.x - camera.x),
-                                static_cast<int>(transform.mPosition.y - camera.y),
+            SDL_Rect dstRect = {static_cast<int>(transform.mPosition.x - (sprite.mIsFixed ? 0 : camera.x)),
+                                static_cast<int>(transform.mPosition.y - (sprite.mIsFixed ? 0 : camera.y)),
                                 static_cast<int>(sprite.mWidth * transform.mScale.x),
                                 static_cast<int>(sprite.mHeight * transform.mScale.y)};
 
