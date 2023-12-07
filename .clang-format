@@ -2,16 +2,18 @@
 Language: Cpp
 Standard: c++17
 BasedOnStyle: LLVM
+
 IndentWidth: 4
+ContinuationIndentWidth: 4
 TabWidth: 4
+AccessModifierOffset: -4
+UseTab: Never
 BreakBeforeBraces: Attach
 AllowShortIfStatementsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
 AlignAfterOpenBracket: Align
 IndentCaseLabels: false
 ColumnLimit: 120
-AccessModifierOffset: -4
-UseTab: Never
 
 # 함수 선언시 인자들을 한줄로 표현할지 여부
 BinPackParameters: false
