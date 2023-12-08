@@ -210,6 +210,8 @@ void Game::LoadLevel(int level) {
                                                    glm::vec2(-200, 0));
     chopper.AddComponent<CameraFollowComponent>();
     chopper.AddComponent<HealthComponent>(100);
+    chopper.AddComponent<ProjectileEmitterComponent>(
+        glm::vec2(150.0, 150.0), 0, 10000, 0, true); // mRepeatFrequencyMS가 0인 것은, 발사를 막는 효과를 내도록 처리함.
 
     Entity radar = mRegistry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(mWindowWidth - 74, 32), glm::vec2(1.0, 1.0), 0.0);
@@ -262,6 +264,7 @@ void Game::Update() {
     // re subscribe
     mRegistry->GetSystem<DamageSystem>().SubscribeToEvents(mEventBus);
     mRegistry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(mEventBus);
+    mRegistry->GetSystem<ProjectileEmitSystem>().SubscribeToEvents(mEventBus);
 
     // system update
     mRegistry->GetSystem<MovementSystem>().Update(deltaTime);
