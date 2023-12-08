@@ -21,6 +21,7 @@
 #include "Components/ProjectileEmitterComponent.h"
 #include "Events/KeyPressedEvent.h"
 #include "Game.h"
+#include "Macros.h"
 #include "SDL2/SDL_keycode.h"
 #include "Systems/CameraMovementSystem.h"
 #include "Systems/CollisionSystem.h"
@@ -29,9 +30,6 @@
 #include "Systems/ProjectileEmitSystem.h"
 #include "Systems/ProjectileLifecycleSystem.h"
 #include "Systems/RenderColliderSystem.h"
-#include "glm/fwd.hpp"
-
-using namespace std;
 
 int Game::mWindowWidth;
 int Game::mWindowHeight;
@@ -211,7 +209,11 @@ void Game::LoadLevel(int level) {
     chopper.AddComponent<CameraFollowComponent>();
     chopper.AddComponent<HealthComponent>(100);
     chopper.AddComponent<ProjectileEmitterComponent>(
-        glm::vec2(150.0, 150.0), 0, 10000, 0, true); // mRepeatFrequencyMS가 0인 것은, 발사를 막는 효과를 내도록 처리함.
+        glm::vec2(150.0, 150.0),
+        DO_NOT_AUTO_RE_EMIT_PROJECTILE_FREQ,
+        10000,
+        0,
+        true); // mRepeatFrequencyMS가 0인 것은, 발사를 막는 효과를 내도록 처리함.
 
     Entity radar = mRegistry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(mWindowWidth - 74, 32), glm::vec2(1.0, 1.0), 0.0);
