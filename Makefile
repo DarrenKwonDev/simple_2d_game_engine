@@ -45,6 +45,9 @@ build:
 verbose:
 	$(CXX_COMPILER_CALL) -v
 
+debug:
+	$(CXX_COMPILER_CALL) -g
+
 videoCheck:
 	$(CXX) $(CXX_STD_WARNINGS) _videoCheck.cpp \
 	$(LDFLAGS)\
