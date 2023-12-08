@@ -187,7 +187,8 @@ void Game::LoadLevel(int level) {
             // 0 1 2 3 4 5 6 7 8 9
             // 10 11 12 13 14 15 16 17 18 19
             // 20 21 22 23 24 25 26 27 28 29
-            tile.AddComponent<SpriteComponent>("tilemap-image", tileSize, tileSize, 0, false, srcRectX, srcRectY);
+            tile.AddComponent<SpriteComponent>(
+                "tilemap-image", tileSize, tileSize, ZIndex::Background, false, srcRectX, srcRectY);
         }
     }
 
@@ -200,7 +201,7 @@ void Game::LoadLevel(int level) {
     Entity chopper = mRegistry->CreateEntity();
     chopper.AddComponent<TransformComponent>(glm::vec2(50.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     chopper.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
-    chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
+    chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, ZIndex::Player);
     chopper.AddComponent<AnimationComponent>(2, 15, true); // it has 2 frame and render five frame per sec
     chopper.AddComponent<KeyboardControlComponent>(glm::vec2(0, -200),
                                                    glm::vec2(200, 0),
@@ -208,23 +209,20 @@ void Game::LoadLevel(int level) {
                                                    glm::vec2(-200, 0));
     chopper.AddComponent<CameraFollowComponent>();
     chopper.AddComponent<HealthComponent>(100);
+    // mRepeatFrequencyMS가 0인 것은, 발사를 막는 효과를 내도록 처리함.
     chopper.AddComponent<ProjectileEmitterComponent>(
-        glm::vec2(150.0, 150.0),
-        DO_NOT_AUTO_RE_EMIT_PROJECTILE_FREQ,
-        10000,
-        0,
-        true); // mRepeatFrequencyMS가 0인 것은, 발사를 막는 효과를 내도록 처리함.
+        glm::vec2(150.0, 150.0), DO_NOT_AUTO_RE_EMIT_PROJECTILE_FREQ, 10000, 0, true);
 
     Entity radar = mRegistry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(mWindowWidth - 74, 32), glm::vec2(1.0, 1.0), 0.0);
     radar.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
-    radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 2, true);
+    radar.AddComponent<SpriteComponent>("radar-image", 64, 64, ZIndex::UI, true);
     radar.AddComponent<AnimationComponent>(8, 5, true);
 
     Entity tank = mRegistry->CreateEntity();
     tank.AddComponent<TransformComponent>(glm::vec2(400.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     tank.AddComponent<RigidBodyComponent>(glm::vec2(-30.0, 00.0));
-    tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
+    tank.AddComponent<SpriteComponent>("tank-image", 32, 32, ZIndex::Enemy);
     tank.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
     tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100.0, 0.0), 1000, 10000, 0, false);
     tank.AddComponent<HealthComponent>(100);
@@ -232,7 +230,7 @@ void Game::LoadLevel(int level) {
     Entity truck = mRegistry->CreateEntity();
     truck.AddComponent<TransformComponent>(glm::vec2(10.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     truck.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 00.0));
-    truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 10);
+    truck.AddComponent<SpriteComponent>("truck-image", 32, 32, ZIndex::Enemy);
     truck.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
     truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0.0, 100.0), 1000, 2000, 0, false);
     truck.AddComponent<HealthComponent>(100);

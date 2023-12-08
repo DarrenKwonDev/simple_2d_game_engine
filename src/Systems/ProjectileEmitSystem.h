@@ -64,7 +64,7 @@ public:
                     Entity projectile = entity.mRegistry->CreateEntity();
                     projectile.AddComponent<TransformComponent>(projectilePosition, glm::vec2(1.0, 1.0), 0.0);
                     projectile.AddComponent<RigidBodyComponent>(projectileVelocity);
-                    projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, 10);
+                    projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, ZIndex::Projectile);
                     projectile.AddComponent<BoxColliderComponent>(4, 4, glm::vec2(0));
                     projectile.AddComponent<ProjectileComponent>(projectileEmitter.mIsFriendly,
                                                                  projectileEmitter.mHitPercentDamage,
@@ -96,7 +96,7 @@ public:
                 Entity projectile = registry->CreateEntity();
                 projectile.AddComponent<TransformComponent>(projectilePosition, glm::vec2(1.0, 1.0), 0.0);
                 projectile.AddComponent<RigidBodyComponent>(projectileEmitter.mProjectileVelocity);
-                projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, 10);
+                projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, ZIndex::Projectile);
                 projectile.AddComponent<BoxColliderComponent>(4, 4, glm::vec2(0));
                 projectile.AddComponent<ProjectileComponent>(projectileEmitter.mIsFriendly,
                                                              projectileEmitter.mHitPercentDamage,

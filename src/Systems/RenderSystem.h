@@ -39,7 +39,7 @@ public:
         std::sort(RenderableEntityVec.begin(),
                   RenderableEntityVec.end(),
                   [](const RenderableEntity& a, const RenderableEntity& b) {
-                      return a.spriteComp.mZIndex < b.spriteComp.mZIndex;
+                      return static_cast<int>(a.spriteComp.mZIndex) < static_cast<int>(b.spriteComp.mZIndex);
                   });
 
         // render concerned entity
