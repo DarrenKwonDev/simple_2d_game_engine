@@ -3,6 +3,7 @@
 #include <bitset>
 #include <deque>
 #include <set>
+#include <string>
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
@@ -14,6 +15,10 @@ const unsigned int MAX_COMPONENTS = 32;
 // keep track of which components an entity has
 // also, which entities a system is interested in.
 typedef std::bitset<MAX_COMPONENTS> Signature;
+
+typedef int EntityId;
+typedef std::string TagName;
+typedef std::string GroupName;
 
 ////////////////////////////////////////////////////////
 // component. pure data
@@ -46,11 +51,14 @@ public:
 ////////////////////////////////////////////////////////
 class Entity {
 private:
-    int mId;
+    EntityId mId;
 
 public:
     Entity(int mId);
     virtual ~Entity();
+
+    Entity(const Entity& rhs) = default;        // 복사 생성
+    Entity& operator=(const Entity&) = default; // 복사 대입 연산
 
     int GetId() const;
     void Kill();
@@ -59,6 +67,17 @@ public:
     // circular deps 문제를 일으킬 가능성이 있으니 조심하자.
     class Registry* mRegistry;
 
+    /////////////////////////
+    // group tag
+    /////////////////////////
+    void Tag(const TagName& tag);
+    bool HasTag(const TagName& tag) const;
+    void Group(const GroupName& group);
+    bool BelongsToGroup(const GroupName& group) const;
+
+    /////////////////////////
+    // component
+    /////////////////////////
     // args에 무엇을 정의하는가에 따라 TArgs가 컴파일타임에 결정된다.
     template <typename TComponent, typename... TArgs>
     void AddComponent(TArgs&&... args);
@@ -72,9 +91,9 @@ public:
     template <typename TComponent>
     TComponent& GetComponent() const;
 
-    Entity(const Entity& rhs) = default;        // 복사 생성
-    Entity& operator=(const Entity&) = default; // 복사 대입 연산
-
+    /////////////////////////
+    // operator
+    /////////////////////////
     bool operator==(const Entity& rhs) const {
         return mId == rhs.mId;
     };
@@ -181,11 +200,38 @@ class Registry {
 private:
     int mNumEntities = 0;
 
+    /////////////////////////
+    // tag, group
+    /////////////////////////
+    /*
+        1 entity has 1 tag.
+        1 tag has 1 entity.
+        1:1
+
+        1 group has many entities.
+        1 entity has 1 group.
+        1:N
+
+        알고리즘 풀 때도 많이 나온 방식인데, 양방향 접근이 가능하도록 자료구조를 2개 만드는 방식.
+        특히 여기선 메모리 조금 더 쓰고 속도를 얻는게 게임 엔진에선 훨씬 좋은 선택이다.
+    */
+
+    std::unordered_map<TagName, Entity> mEntityPerTagMap;
+    std::unordered_map<EntityId, TagName> mTagPerEntityMap;
+    std::unordered_map<GroupName, std::set<Entity>> mEntityPerGroupMap;
+    std::unordered_map<EntityId, GroupName> mGroupPerEntityMap;
+
+    /////////////////////////
+    // temp buffer
+    /////////////////////////
     // 다음 tick의 Registry.Update를 타고 가도록 설정해놓는 일종의 buffer 역할
     // Update 도중 이러한 작업들이 일어나면 로직이 망가질 것이다.
     std::set<Entity> mEntitiesToBeAdded;
     std::set<Entity> mEntitiesToBeKilled;
 
+    /////////////////////////
+    // components
+    /////////////////////////
     /*
         vector of component pool.
 
@@ -227,6 +273,22 @@ public:
     Entity CreateEntity();
     void KillEntity(Entity entity);
 
+    /////////////////////////
+    // tag
+    /////////////////////////
+    void TagEntity(Entity entity, const TagName& tag);
+    bool EntityHasTag(Entity entity, const TagName& tag) const;
+    Entity GetEntityByTag(const TagName& tag) const;
+    void RemoveEntityTag(Entity entity);
+
+    void GroupEntity(Entity entity, const GroupName& group);
+    bool EntityBelongsToGroup(Entity entity, const GroupName& group) const;
+    std::vector<Entity> GetEntitiesByGroup(const GroupName& group) const;
+    void RemoveEntityFromGroup(Entity entity);
+
+    /////////////////////////
+    // component
+    /////////////////////////
     // entity에 특정 component를 추가합니다.
     template <typename TComponent, typename... TArgs>
     void AddComponent(Entity entity, TArgs&&... args);

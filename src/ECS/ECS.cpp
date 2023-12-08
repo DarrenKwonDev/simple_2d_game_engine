@@ -24,6 +24,19 @@ void Entity::Kill() {
     mRegistry->KillEntity(*this);
 }
 
+void Entity::Tag(const TagName& tag) {
+    mRegistry->TagEntity(*this, tag);
+}
+bool Entity::HasTag(const TagName& tag) const {
+    return mRegistry->EntityHasTag(*this, tag);
+}
+void Entity::Group(const GroupName& group) {
+    mRegistry->GroupEntity(*this, group);
+}
+bool Entity::BelongsToGroup(const GroupName& group) const {
+    return mRegistry->EntityBelongsToGroup(*this, group);
+}
+
 ////////////////////////////////////////////////////////
 // registry
 ////////////////////////////////////////////////////////
@@ -50,6 +63,9 @@ void Registry::Update() {
 
         // for reusing entity
         mFreeIds.push_back(entity.GetId());
+
+        Registry::RemoveEntityTag(entity);
+        Registry::RemoveEntityFromGroup(entity);
     }
     mEntitiesToBeKilled.clear();
 }
@@ -81,6 +97,61 @@ Entity Registry::CreateEntity() {
 
 void Registry::KillEntity(Entity entity) {
     mEntitiesToBeKilled.insert(entity);
+}
+
+void Registry::TagEntity(Entity entity, const TagName& tag) {
+    mEntityPerTagMap.emplace(tag, entity);
+    mTagPerEntityMap.emplace(entity.GetId(), tag);
+}
+bool Registry::EntityHasTag(Entity entity, const TagName& tag) const {
+    if (mTagPerEntityMap.find(entity.GetId()) == mTagPerEntityMap.end()) {
+        return false;
+    }
+    return mEntityPerTagMap.find(tag)->second == entity;
+}
+Entity Registry::GetEntityByTag(const TagName& tag) const {
+    return mEntityPerTagMap.at(tag);
+}
+void Registry::RemoveEntityTag(Entity entity) {
+    auto taggedEntityIter = mTagPerEntityMap.find(entity.GetId());
+    if (taggedEntityIter == mTagPerEntityMap.end()) {
+        return;
+    }
+    TagName tag = taggedEntityIter->second;
+    mEntityPerTagMap.erase(tag);
+    mTagPerEntityMap.erase(taggedEntityIter);
+}
+
+void Registry::GroupEntity(Entity entity, const GroupName& group) {
+    mEntityPerGroupMap.emplace(group, std::set<Entity>());
+    mEntityPerGroupMap.at(group).insert(entity);
+    mGroupPerEntityMap.emplace(entity.GetId(), group);
+}
+bool Registry::EntityBelongsToGroup(Entity entity, const GroupName& group) const {
+    auto groupEntities = mEntityPerGroupMap.at(group);
+    return groupEntities.find(entity) != groupEntities.end();
+}
+std::vector<Entity> Registry::GetEntitiesByGroup(const GroupName& group) const {
+    auto& groupEntities = mEntityPerGroupMap.at(group);
+    return std::vector<Entity>(groupEntities.begin(), groupEntities.end());
+}
+void Registry::RemoveEntityFromGroup(Entity entity) {
+    // 두 가지 맵에서 모두 드랍해야 한다.
+    // mGroupPerEntityMap -> entity ID 가진 필드 드랍
+    // mEntityPerGroupMap -> entity가 가진 group에서 entity 드랍 (group을 모두 순회하지 않도록하자.)
+
+    auto groupNameIter = mGroupPerEntityMap.find(entity.GetId());
+    if (groupNameIter == mGroupPerEntityMap.end()) {
+        return;
+    }
+
+    // entity가 가진 group에서 entity 드랍
+    GroupName group = groupNameIter->second;
+    auto& setOfEntities = mEntityPerGroupMap.at(group);
+    setOfEntities.erase(entity);
+
+    // 해당 entity에서 group 드랍
+    mGroupPerEntityMap.erase(groupNameIter);
 }
 
 void Registry::AddEntityToSystems(Entity entity) {

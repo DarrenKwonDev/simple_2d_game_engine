@@ -178,6 +178,7 @@ void Game::LoadLevel(int level) {
             mapFile.ignore(); // ','는 버려야 하므로.
 
             Entity tile = mRegistry->CreateEntity();
+            tile.Group("tiles");
             tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
                                                   glm::vec2(tileScale, tileScale),
                                                   0.0);
@@ -199,6 +200,7 @@ void Game::LoadLevel(int level) {
 
     // create entity and add component
     Entity chopper = mRegistry->CreateEntity();
+    chopper.Tag("player");
     chopper.AddComponent<TransformComponent>(glm::vec2(50.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     chopper.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, ZIndex::Player);
@@ -220,6 +222,7 @@ void Game::LoadLevel(int level) {
     radar.AddComponent<AnimationComponent>(8, 5, true);
 
     Entity tank = mRegistry->CreateEntity();
+    tank.Tag("enemies");
     tank.AddComponent<TransformComponent>(glm::vec2(400.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     tank.AddComponent<RigidBodyComponent>(glm::vec2(-30.0, 00.0));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, ZIndex::Enemy);
@@ -228,6 +231,7 @@ void Game::LoadLevel(int level) {
     tank.AddComponent<HealthComponent>(100);
 
     Entity truck = mRegistry->CreateEntity();
+    truck.Tag("enemies");
     truck.AddComponent<TransformComponent>(glm::vec2(10.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     truck.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 00.0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, ZIndex::Enemy);
