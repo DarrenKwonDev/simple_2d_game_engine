@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Components/BoxColliderComponent.h"
+#include "Components/ProjectileComponent.h"
 #include "Components/ProjectileEmitterComponent.h"
 #include "Components/RigidBodyComponent.h"
 #include "Components/SpriteComponent.h"
@@ -37,6 +38,9 @@ public:
                 projectile.AddComponent<RigidBodyComponent>(projectileEmitter.mProjectileVelocity);
                 projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, 10);
                 projectile.AddComponent<BoxColliderComponent>(4, 4, glm::vec2(0));
+                projectile.AddComponent<ProjectileComponent>(projectileEmitter.mIsFriendly,
+                                                             projectileEmitter.mHitPercentDamage,
+                                                             projectileEmitter.mProjectileDurationMS);
 
                 projectileEmitter.mLastProjectileTime = SDL_GetTicks();
             }

@@ -16,6 +16,7 @@
 #include "../Systems/RenderSystem.h"
 #include "Components/BoxColliderComponent.h"
 #include "Components/CameraFollowComponent.h"
+#include "Components/HealthComponent.h"
 #include "Components/KeyboardControlComponent.h"
 #include "Components/ProjectileEmitterComponent.h"
 #include "Events/KeyPressedEvent.h"
@@ -26,6 +27,7 @@
 #include "Systems/DamageSystem.h"
 #include "Systems/KeyboardControlSystem.h"
 #include "Systems/ProjectileEmitSystem.h"
+#include "Systems/ProjectileLifecycleSystem.h"
 #include "Systems/RenderColliderSystem.h"
 #include "glm/fwd.hpp"
 
@@ -145,6 +147,7 @@ void Game::LoadLevel(int level) {
     mRegistry->AddSystem<KeyboardControlSystem>();
     mRegistry->AddSystem<CameraMovementSystem>();
     mRegistry->AddSystem<ProjectileEmitSystem>();
+    mRegistry->AddSystem<ProjectileLifecycleSystem>();
 
     // add texture
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
@@ -206,6 +209,7 @@ void Game::LoadLevel(int level) {
                                                    glm::vec2(0, 200),
                                                    glm::vec2(-200, 0));
     chopper.AddComponent<CameraFollowComponent>();
+    chopper.AddComponent<HealthComponent>(100);
 
     Entity radar = mRegistry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(mWindowWidth - 74, 32), glm::vec2(1.0, 1.0), 0.0);
@@ -219,13 +223,15 @@ void Game::LoadLevel(int level) {
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
     tank.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
     tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100.0, 0.0), 1000, 10000, 0, false);
+    tank.AddComponent<HealthComponent>(100);
 
     Entity truck = mRegistry->CreateEntity();
     truck.AddComponent<TransformComponent>(glm::vec2(10.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     truck.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 00.0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 10);
     truck.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
-    truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0.0, 100.0), 1000, 10000, 0, false);
+    truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0.0, 100.0), 1000, 2000, 0, false);
+    truck.AddComponent<HealthComponent>(100);
 }
 
 // one time setup
@@ -263,6 +269,7 @@ void Game::Update() {
     mRegistry->GetSystem<CollisionSystem>().Update(mEventBus);
     mRegistry->GetSystem<CameraMovementSystem>().Update(mCamera);
     mRegistry->GetSystem<ProjectileEmitSystem>().Update(mRegistry);
+    mRegistry->GetSystem<ProjectileLifecycleSystem>().Update();
 
     // system update를 마친후 생성, 삭제 대기 중인 entity를
     // 다음 tick update에 반영하기 위해 system에 등록
