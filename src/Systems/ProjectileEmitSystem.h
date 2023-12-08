@@ -34,14 +34,16 @@ public:
                     const auto& transform = entity.GetComponent<TransformComponent>();
                     const auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
 
+                    // projectile의 시작 position을 중앙으로 설정.
                     glm::vec2 projectilePosition = transform.mPosition;
-
                     if (entity.HasComponent<SpriteComponent>()) {
                         const auto& sprite = entity.GetComponent<SpriteComponent>();
                         projectilePosition.x += (transform.mScale.x * sprite.mWidth / 2);
                         projectilePosition.y += (transform.mScale.y * sprite.mHeight / 2);
                     }
 
+                    // keyboard control system에 의해 rigid body의 velocity가 변환하면,
+                    // 해당 velocity를 기반으로 projectile의 속력과 방향을 결정한다.
                     glm::vec2 projectileVelocity = projectileEmitter.mProjectileVelocity;
                     int directionX = 0;
                     int directionY = 0;

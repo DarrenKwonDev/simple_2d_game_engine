@@ -32,19 +32,19 @@ public:
             switch (event.mSymbol) {
             case SDLK_UP:
                 rigidBody.mVelocity = keyboardControl.mUpVelocity;
-                sprite.mSrcRect.y = sprite.mHeight * 0;
+                sprite.mSrcRect.y = sprite.mHeight * 0; // png img의 첫번째 row
                 break;
             case SDLK_RIGHT:
                 rigidBody.mVelocity = keyboardControl.mRightVelocity;
-                sprite.mSrcRect.y = sprite.mHeight * 1;
+                sprite.mSrcRect.y = sprite.mHeight * 1; // png img의 두번째 row
                 break;
             case SDLK_DOWN:
                 rigidBody.mVelocity = keyboardControl.mDownVelocity;
-                sprite.mSrcRect.y = sprite.mHeight * 2;
+                sprite.mSrcRect.y = sprite.mHeight * 2; // png img의 세번째 row
                 break;
             case SDLK_LEFT:
                 rigidBody.mVelocity = keyboardControl.mLeftVelocity;
-                sprite.mSrcRect.y = sprite.mHeight * 3;
+                sprite.mSrcRect.y = sprite.mHeight * 3; // png img의 네번째 row
                 break;
             default:
                 // nil
