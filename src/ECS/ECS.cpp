@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <stdexcept>
 
 #include "../Logger/Logger.h"
 #include "ECS.h"
@@ -104,11 +105,19 @@ void Registry::TagEntity(Entity entity, const TagName& tag) {
     mTagPerEntityMap.emplace(entity.GetId(), tag);
 }
 bool Registry::EntityHasTag(Entity entity, const TagName& tag) const {
-    if (mTagPerEntityMap.find(entity.GetId()) == mTagPerEntityMap.end()) {
+    auto entityIter = mTagPerEntityMap.find(entity.GetId());
+    if (entityIter == mTagPerEntityMap.end()) {
         return false;
     }
-    return mEntityPerTagMap.find(tag)->second == entity;
+
+    auto tagIter = mEntityPerTagMap.find(tag);
+    if (tagIter == mEntityPerTagMap.end()) {
+        return false;
+    }
+
+    return tagIter->second == entity;
 }
+
 Entity Registry::GetEntityByTag(const TagName& tag) const {
     return mEntityPerTagMap.at(tag);
 }
@@ -128,9 +137,15 @@ void Registry::GroupEntity(Entity entity, const GroupName& group) {
     mGroupPerEntityMap.emplace(entity.GetId(), group);
 }
 bool Registry::EntityBelongsToGroup(Entity entity, const GroupName& group) const {
+    // 게임이 처음 시작될 때 group이 생기기도 전에 entity가 부딪히는 경우가 있음.
+    // 이 경우를 handling해주지 않으면 crash 발생.
+    if (mEntityPerGroupMap.find(group) == mEntityPerGroupMap.end()) {
+        return false;
+    }
     auto groupEntities = mEntityPerGroupMap.at(group);
     return groupEntities.find(entity) != groupEntities.end();
 }
+
 std::vector<Entity> Registry::GetEntitiesByGroup(const GroupName& group) const {
     auto& groupEntities = mEntityPerGroupMap.at(group);
     return std::vector<Entity>(groupEntities.begin(), groupEntities.end());

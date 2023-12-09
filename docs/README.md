@@ -286,6 +286,7 @@ SDL_Surface는 시스템 메모리(RAM)에 저장되고, SDL_Texture는 GPU의 �
 -   IDE로 vscode를 사용 중인데, c/c++ extension가 제공해주는 intellisense가 아주 느리다. [clangd](https://clangd.llvm.org/) 사용을 권장하며, 사용하는 빌드 시스템 툴에 따라 compile_commands.json을 생성하여 사용하자.
 -   enum 보다 enum class가 strongly typed기도 하고, enum의 class를 명시하는 효과가 있어서 더 자주 사용하는 편이다. 특히, 타 언어에서 그런 표기법을 사용하는 경우가 많아서 익숙하다.
 -   DO NOT USE EXCEPTION. just let engine crash.
+-   타 언어일 때는 inlay hints가 지저분해보였는데 c/cpp에서는 이게 없으면 코드 읽기가 더 힘들어지는 듯. 활성화 추천.
 
 ## etc
 

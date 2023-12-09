@@ -81,7 +81,8 @@ void Game::Initialize() {
         return;
     }
 
-    SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
+    // FIXME: when engine crashed, window is not restored to normal state.
+    // SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
 
     // set camera
     Logger::Log("camera initialized");
@@ -204,6 +205,7 @@ void Game::LoadLevel(int level) {
     chopper.AddComponent<TransformComponent>(glm::vec2(50.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
     chopper.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, ZIndex::Player);
+    chopper.AddComponent<BoxColliderComponent>(32, 32);
     chopper.AddComponent<AnimationComponent>(2, 15, true); // it has 2 frame and render five frame per sec
     chopper.AddComponent<KeyboardControlComponent>(glm::vec2(0, -200),
                                                    glm::vec2(200, 0),
@@ -213,7 +215,7 @@ void Game::LoadLevel(int level) {
     chopper.AddComponent<HealthComponent>(100);
     // mRepeatFrequencyMS가 0인 것은, 발사를 막는 효과를 내도록 처리함.
     chopper.AddComponent<ProjectileEmitterComponent>(
-        glm::vec2(150.0, 150.0), DO_NOT_AUTO_RE_EMIT_PROJECTILE_FREQ, 10000, 0, true);
+        glm::vec2(250.0, 250.0), DO_NOT_AUTO_RE_EMIT_PROJECTILE_FREQ, 10000, 10, true);
 
     Entity radar = mRegistry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(mWindowWidth - 74, 32), glm::vec2(1.0, 1.0), 0.0);
@@ -222,21 +224,21 @@ void Game::LoadLevel(int level) {
     radar.AddComponent<AnimationComponent>(8, 5, true);
 
     Entity tank = mRegistry->CreateEntity();
-    tank.Tag("enemies");
-    tank.AddComponent<TransformComponent>(glm::vec2(400.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
+    tank.Group("enemies");
+    tank.AddComponent<TransformComponent>(glm::vec2(400.0, 550.0), glm::vec2(1.0, 1.0), 0.0);
     tank.AddComponent<RigidBodyComponent>(glm::vec2(-30.0, 00.0));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, ZIndex::Enemy);
     tank.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
-    tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100.0, 0.0), 1000, 10000, 0, false);
+    tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100.0, 0.0), 1000, 10000, 10, false);
     tank.AddComponent<HealthComponent>(100);
 
     Entity truck = mRegistry->CreateEntity();
-    truck.Tag("enemies");
-    truck.AddComponent<TransformComponent>(glm::vec2(10.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
+    truck.Group("enemies");
+    truck.AddComponent<TransformComponent>(glm::vec2(100.0, 350.0), glm::vec2(1.0, 1.0), 0.0);
     truck.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 00.0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, ZIndex::Enemy);
     truck.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
-    truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0.0, 100.0), 1000, 2000, 0, false);
+    truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0.0, 100.0), 1000, 2000, 10, false);
     truck.AddComponent<HealthComponent>(100);
 }
 

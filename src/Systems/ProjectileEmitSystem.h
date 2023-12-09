@@ -60,10 +60,11 @@ public:
                         directionY = -1;
                     }
 
-                    projectileVelocity.x += projectileEmitter.mProjectileVelocity.x * directionX;
-                    projectileVelocity.y += projectileEmitter.mProjectileVelocity.y * directionY;
+                    projectileVelocity.x = projectileEmitter.mProjectileVelocity.x * directionX;
+                    projectileVelocity.y = projectileEmitter.mProjectileVelocity.y * directionY;
 
                     Entity projectile = entity.mRegistry->CreateEntity();
+                    projectile.Group("projectiles");
                     projectile.AddComponent<TransformComponent>(projectilePosition, glm::vec2(1.0, 1.0), 0.0);
                     projectile.AddComponent<RigidBodyComponent>(projectileVelocity);
                     projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, ZIndex::Projectile);
@@ -96,6 +97,7 @@ public:
                 }
 
                 Entity projectile = registry->CreateEntity();
+                projectile.Group("projectiles");
                 projectile.AddComponent<TransformComponent>(projectilePosition, glm::vec2(1.0, 1.0), 0.0);
                 projectile.AddComponent<RigidBodyComponent>(projectileEmitter.mProjectileVelocity);
                 projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, ZIndex::Projectile);
