@@ -1,6 +1,6 @@
 <!-- toc -->
 
--   [2d-game-engine-poc](#2d-game-engine-poc)
+-   [simple_2d_game_engine](#simple_2d_game_engine)
     -   [configure](#configure)
         -   [deps](#deps)
     -   [game things](#game-things)
@@ -11,6 +11,7 @@
         -   [Determinism](#determinism)
         -   [ECS(Entity Component System)](#ecsentity-component-system)
             -   [component의 memory contiguous한 배치와 Pool](#component의-memory-contiguous한-배치와-pool)
+            -   [DOP (data-oriented programming)](#dop-data-oriented-programming)
         -   [event system](#event-system)
             -   [비동기 프로그래밍과 pub-sub](#비동기-프로그래밍과-pub-sub)
         -   [collision check](#collision-check)
@@ -30,7 +31,7 @@
 
 <!-- tocstop -->
 
-# 2d-game-engine-poc
+# simple_2d_game_engine
 
 ## configure
 
@@ -155,7 +156,7 @@ Pool 방식으로 관리함으로써 동일한 유형의 컴포넌트를 연속�
 
 Pool의 구현은 단순히 memory contiguous한 자료구조(vector, array, ...)에 객체 혹은 식별자를 넣은 것에 불과하다.
 
-해당 엔진에서의 Pool은 아래와 같이 구성된다.
+해당 엔진에서의 Pool은 (entity의 갯수, component의 갯수)의 이차원 배열 꼴로 아래와 같이 구성된다.
 
 | Entity / Component | CompA | CompB | CompC |
 | ------------------ | ----- | ----- | ----- |
@@ -163,6 +164,18 @@ Pool의 구현은 단순히 memory contiguous한 자료구조(vector, array, ...
 | Entity 1           | CompA |       | CompC |
 | Entity 2           | CompA | CompB |       |
 | Entity 3           | CompA | CompB | CompC |
+
+사실, 이러한 구성은 entity가 가지고 있지 않은 component 부분에 대해서 data cap을 가진, 즉, 메모리를 낭비하는 부분이 있다.
+
+#### DOP (data-oriented programming)
+
+게임 관련 프로그램은 말 그대로 `squeeze performance out of hardware`를 목표로 한다. 보통 CPU cache hit rate를 높이는 것이 목표이다. 따라서 data locality를 위해 memory contiguity한 처리를 중시한다.
+
+cache fail하면 memory hierarchy 하위인 매체로 접근해야 하는데 (CPU -> RAM -> Disk) 각 매체는 용량과 속도를 trade off한 것이므로 속도가 자연스레 느리다.
+
+-   [CppCon 2014: Mike Acton "Data-Oriented Design and C++"](https://www.youtube.com/watch?v=rX0ItVEVjHc&ab_channel=CppCon)
+-   [초보개발자 데이터지향 설계(Data Oriented Design) 알아보기](https://monday9pm.com/%EC%B4%88%EB%B3%B4%EA%B0%9C%EB%B0%9C%EC%9E%90-%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%A7%80%ED%96%A5-%EC%84%A4%EA%B3%84-data-oriented-design-%EC%95%8C%EC%95%84%EB%B3%B4%EA%B8%B0-c0bbd36ea9da)
+-   [Game Performance: Data-Oriented Programming](https://android-developers.googleblog.com/2015/07/game-performance-data-oriented.html)
 
 ### event system
 
