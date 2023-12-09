@@ -29,7 +29,7 @@ public:
     void OnKeyPressed(KeyPressedEvent& event) {
         if (event.mSymbol == SDLK_SPACE) {
             for (Entity entity : GetSystemEntities()) {
-                if (entity.HasComponent<CameraFollowComponent>()) {
+                if (entity.HasTag("player")) {
                     const auto& projectileEmitter = entity.GetComponent<ProjectileEmitterComponent>();
                     const auto& transform = entity.GetComponent<TransformComponent>();
                     const auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
