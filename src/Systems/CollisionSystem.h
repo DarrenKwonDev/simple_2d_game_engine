@@ -48,7 +48,7 @@ public:
     }
 
     bool CheckAABBCollision(double aX, double aY, double aW, double aH, double bX, double bY, double bW, double bH) {
-        return (aX + aW > bW && aX < bX + bW && aY + aH > bY && aY < bY + bH);
+        return (aX < bX + bW && aX + aW > bX && aY + aH > bY && aY < bY + bH);
     };
 
 private:
