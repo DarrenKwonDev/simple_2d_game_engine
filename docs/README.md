@@ -11,7 +11,9 @@
         -   [Determinism](#determinism)
         -   [ECS(Entity Component System)](#ecsentity-component-system)
             -   [component의 memory contiguous한 배치와 Pool](#component의-memory-contiguous한-배치와-pool)
+            -   [pool의 data gap을 제거하는 방안 (개선안)](#pool의-data-gap을-제거하는-방안-개선안)
             -   [DOP (data-oriented programming)](#dop-data-oriented-programming)
+            -   [array of struct(AOS) vs struct of array(SOA)](#array-of-structaos-vs-struct-of-arraysoa)
         -   [event system](#event-system)
             -   [비동기 프로그래밍과 pub-sub](#비동기-프로그래밍과-pub-sub)
         -   [collision check](#collision-check)
@@ -167,6 +169,13 @@ Pool의 구현은 단순히 memory contiguous한 자료구조(vector, array, ...
 
 사실, 이러한 구성은 entity가 가지고 있지 않은 component 부분에 대해서 data cap을 가진, 즉, 메모리를 낭비하는 부분이 있다.
 
+#### pool의 data gap을 제거하는 방안 (개선안)
+
+즉, component pool을 packed하게 관리해야 한다.
+위 방식에 data gap이 발생하는 이유는, 단순히 entityId를 index로 사용하고 있기 때문이다.
+
+가장 간단한 방식으로 해결하려면, entity-index 간 상호 변환 가능한 양방향 맵을 운영하는 것.
+
 #### DOP (data-oriented programming)
 
 게임 관련 프로그램은 말 그대로 `squeeze performance out of hardware`를 목표로 한다. 보통 CPU cache hit rate를 높이는 것이 목표이다. 따라서 data locality를 위해 memory contiguity한 처리를 중시한다.
@@ -176,6 +185,32 @@ cache fail하면 memory hierarchy 하위인 매체로 접근해야 하는데 (CP
 -   [CppCon 2014: Mike Acton "Data-Oriented Design and C++"](https://www.youtube.com/watch?v=rX0ItVEVjHc&ab_channel=CppCon)
 -   [초보개발자 데이터지향 설계(Data Oriented Design) 알아보기](https://monday9pm.com/%EC%B4%88%EB%B3%B4%EA%B0%9C%EB%B0%9C%EC%9E%90-%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%A7%80%ED%96%A5-%EC%84%A4%EA%B3%84-data-oriented-design-%EC%95%8C%EC%95%84%EB%B3%B4%EA%B8%B0-c0bbd36ea9da)
 -   [Game Performance: Data-Oriented Programming](https://android-developers.googleblog.com/2015/07/game-performance-data-oriented.html)
+
+#### array of struct(AOS) vs struct of array(SOA)
+
+```cpp
+// AOS. 흔히 짜던 방식이고 직관적
+struct ThreeDimensionalVector {
+    double x, y, z;
+};
+std::array<ThreeDimensionalVector, 1024> arrayOfStruct;
+
+// SOA. DOD에서의 방식
+struct structOfArrays {
+    std::array<double, 1024> x;
+    std::array<double, 1024> y;
+    std::array<double, 1024> z;
+};
+```
+
+AOS 방식은, x, y, z가 동시에 다 바뀌어야 할 때 유용한 편
+SOA 방식은, 어느 한 축의 값만 바뀌는 경우가 많을 때 유용한 편
+
+-   특정 시스템, 로직은 보통 객체의 한 멤버 변수에만 관심이 있을 때가 많다. 아이템의 수량만 바꾸지, 수량과 이름을 동시에 바꿀만한 경우는 드물다. 그래서 DOD 관점에선 SOA가 더 자주 사용되는 편이라고 한다.
+
+    -   메모리 레이아웃으로 따지자면, AOS는 [(x, y, z), (x, y, z)] 꼴일 터이고, SOA는 [x, x, x, ...], [y, y, y, ...], [z, z, z, ...] 와 같은 꼴일 터이다. 특정 로직이 x, y, z가 다 필요하면 AOS 방식이 data locality 측면에서 유리할 것이고, 특정 필드에만 자주 접근하는 경우 SOA 방식이 유리할 것이다.
+
+-   해당 시스템에서는 직관적인 AOS 방식을 사용하였다. 어.. 사실 뭘 사용하는 지 확실하게 정하는 건 프로파일링을 통해서 성능 차이가 확연한 이점이 있을 때 하는게 좋다고 생각한다. don't premature optimization.
 
 ### event system
 
@@ -336,6 +371,12 @@ OTF는 TTF보다 더 많은 기능을 제공하는 대신 더 큰 용량을 차�
 
 ## resources
 
+-   [Nomad Game Engine](https://savas.ca/nomad)
+-   [A SIMPLE ENTITY COMPONENT SYSTEM (ECS) [C++]](https://austinmorlan.com/posts/entity_component_system/)
+-   [MIX(C++ minimal ECS)](https://github.com/arvidsson/Mix)
+-   [murder game engine](https://github.com/isadorasophia/murder)
+-   [EnTT (for C++ projects)](https://github.com/skypjack/entt)
+-   [Flecs (for C projects)](https://github.com/SanderMertens/flecs)
 -   [SDL 프로그래밍 컴플리트 가이드](https://wikidocs.net/book/6636)
 -   https://gafferongames.com/post/fix_your_timestep/
 -   https://denyskryvytskyi.github.io/event-system

@@ -150,44 +150,86 @@ inline void System::RequireComponent() {
 // 이 경우엔 template class를 또다른 곳에서 template으로 받아야 하는 상황이라서.
 struct IPool {
 public:
-    virtual ~IPool(){};
+    virtual ~IPool() = default;
+    virtual void RemoveEntity(int entityId) = 0;
 };
 
 template <typename T>
 class Pool : public IPool {
 private:
-    std::vector<T> data;
+    std::vector<T> mData;
+    int mSize;
+
+    std::unordered_map<int, int> mEntityIdToIndexMap;
+    std::unordered_map<int, int> mIndexToEntityIdMap;
 
 public:
-    Pool(int size = 100) {
-        data.resize(size);
+    Pool(int cap = 100) {
+        mSize = 0;
+        mData.resize(cap);
     };
     virtual ~Pool() = default;
 
-    T& operator[](unsigned int index) {
-        return data[index];
-    }
+    // T& operator[](unsigned int index) {
+    //     return mData[index];
+    // }
 
-    bool isEmpty() const {
-        return data.empty();
+    bool IsEmpty() const {
+        return mSize == 0;
     }
     int GetSize() const {
-        return data.size();
+        return mSize;
     }
     void Resize(int n) {
-        data.resize(n);
+        mData.resize(n);
     }
     void Clear() {
-        data.clear();
+        mData.clear();
+        mSize = 0;
     }
-    void Add(const T object) {
-        data.push_back(object);
+    // void Add(const T object) {
+    //     mData.push_back(object);
+    // }
+    void Set(int entityId, const T object) {
+        if (mEntityIdToIndexMap.find(entityId) != mEntityIdToIndexMap.end()) {
+            // 이미 존재하는 entity라면, 해당 entity의 index를 찾아서 대체.
+            int idx = mEntityIdToIndexMap[entityId];
+            mData[idx] = object;
+        } else {
+            int idx = mSize;
+            mEntityIdToIndexMap.emplace(entityId, idx);
+            mIndexToEntityIdMap.emplace(idx, entityId);
+            if (idx >= mData.capacity()) {
+                mData.resize(mSize * 2);
+            }
+            mData[idx] = object;
+            mSize++;
+        }
     }
-    void Set(int index, const T object) {
-        data[index] = object;
+    void Remove(int entityId) {
+        // 지워져야 하는 자리에 마지막 요소를 넣는 작업
+        int idxOfRemoved = mEntityIdToIndexMap[entityId];
+        int idxOfLast = mSize - 1;
+        mData[idxOfRemoved] = mData[idxOfLast]; // 마지막 요소를 지워져야 하는 자리에 넣어 pool을 pack하게 유지
+
+        // entity-idx 매핑 업데이트
+        int mEntityOfLastElement = mIndexToEntityIdMap[idxOfLast];
+        mEntityIdToIndexMap[mEntityOfLastElement] = idxOfRemoved;
+        mIndexToEntityIdMap[idxOfRemoved] = mEntityOfLastElement;
+
+        // 제거
+        mEntityIdToIndexMap.erase(entityId);  // 지워져야 하는 entity 삭제
+        mIndexToEntityIdMap.erase(idxOfLast); // 마지막 entity 삭제
+
+        mSize--;
     }
-    T& Get(int index) {
-        return static_cast<T&>(data[index]);
+    void RemoveEntity(int entityId) override {
+        if (mEntityIdToIndexMap.find(entityId) != mEntityIdToIndexMap.end()) {
+            Remove(entityId);
+        }
+    }
+    T& Get(int entityId) {
+        return static_cast<T&>(mData[mEntityIdToIndexMap[entityId]]);
     }
 };
 
@@ -233,6 +275,8 @@ private:
     // components
     /////////////////////////
     /*
+        THIS COMMENT IS DEPRECATED BUT STILL USEFUL FOR UNDERSTANDING.
+
         vector of component pool.
 
         vector<vector<Component>> 의 꼴.
@@ -357,16 +401,10 @@ inline void Registry::AddComponent(Entity entity, TArgs&&... args) {
     std::shared_ptr<Pool<TComponent>> componentPool =
         std::static_pointer_cast<Pool<TComponent>>(mComponentPools[componentId]);
 
-    // (entity count, component count) 이차원 행렬을 위해서.
-    if (entityId >= componentPool->GetSize()) {
-        componentPool->Resize(mNumEntities);
-    }
-
     // std::forward
     // https://en.cppreference.com/w/cpp/utility/forward
     // forward args to create new component
     TComponent newComponent(std::forward<TArgs>(args)...);
-    // Poo.data[entityId] = newComponent;
     componentPool->Set(entityId, newComponent);
 
     // entity의 signature에 특정 componentId에 해당하는 bit를 올려준다.
@@ -382,8 +420,9 @@ inline void Registry::RemoveComponent(Entity entity) {
     const auto componentId = Component<TComponent>::GetId();
     const auto entityId = entity.GetId();
 
-    // entity 객체는 component를 소유하지 않고 있다 (entity-component 관계는 모두 pool에서 관리됨.)
-    // 따라서, signature에 특정 비트 위치만 꺼주면 됨.
+    auto componentPool = std::static_pointer_cast<Pool<TComponent>>(mComponentPools[componentId]);
+    componentPool->Remove(entityId);
+
     mEntityComponentSignatures[entityId].set(componentId, false);
 
     Logger::Log("component id: " + std::to_string(componentId) +
