@@ -13,7 +13,8 @@ AssetStore::~AssetStore() {
 }
 
 void AssetStore::ClearAssets() {
-    // ptr를 든 stl container는 내부 원소를 삭제한 뒤, container를 삭제해야 메모리 leak이 없음에 주의.
+    // ptr를 든 stl container는 내부 원소를 삭제한 뒤, container를 삭제해야 메모리 leak이
+    // 없음에 주의.
     for (auto& [_, texture] : mTextures) {
         SDL_DestroyTexture(texture);
     }

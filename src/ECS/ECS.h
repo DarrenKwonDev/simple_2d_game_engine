@@ -38,7 +38,8 @@ public:
 
     // return unique id of component
     // T가 다를 때 마다 새로운 Component class가 될 것이다.
-    // Component<A>에 부여되는 static 변수와 Component<B> 클래스에 부여되는 static 변수는 다르다.
+    // Component<A>에 부여되는 static 변수와 Component<B> 클래스에 부여되는 static 변수는
+    // 다르다.
     static int GetId() {
         static auto mId = nextId++;
         return mId;
@@ -47,7 +48,8 @@ public:
 
 ////////////////////////////////////////////////////////
 // Entity. just id.
-// entity 객체는 component를 소유하지 않고 있다 (entity-component 관계는 모두 pool에서 관리됨.)
+// entity 객체는 component를 소유하지 않고 있다 (entity-component 관계는 모두 pool에서
+// 관리됨.)
 ////////////////////////////////////////////////////////
 class Entity {
 private:
@@ -210,7 +212,8 @@ public:
         // 지워져야 하는 자리에 마지막 요소를 넣는 작업
         int idxOfRemoved = mEntityIdToIndexMap[entityId];
         int idxOfLast = mSize - 1;
-        mData[idxOfRemoved] = mData[idxOfLast]; // 마지막 요소를 지워져야 하는 자리에 넣어 pool을 pack하게 유지
+        mData[idxOfRemoved] = mData[idxOfLast]; // 마지막 요소를 지워져야 하는 자리에 넣어
+                                                // pool을 pack하게 유지
 
         // entity-idx 매핑 업데이트
         int mEntityOfLastElement = mIndexToEntityIdMap[idxOfLast];
@@ -254,8 +257,9 @@ private:
         1 entity has 1 group.
         1:N
 
-        알고리즘 풀 때도 많이 나온 방식인데, 양방향 접근이 가능하도록 자료구조를 2개 만드는 방식.
-        특히 여기선 메모리 조금 더 쓰고 속도를 얻는게 게임 엔진에선 훨씬 좋은 선택이다.
+        알고리즘 풀 때도 많이 나온 방식인데, 양방향 접근이 가능하도록 자료구조를 2개
+       만드는 방식. 특히 여기선 메모리 조금 더 쓰고 속도를 얻는게 게임 엔진에선 훨씬 좋은
+       선택이다.
     */
 
     std::unordered_map<TagName, Entity> mEntityPerTagMap;
@@ -287,8 +291,8 @@ private:
         [ Component0, Component0, Component0, ... ]
         index는 entityId에 해당.
 
-        따라서, mComponentPools[componentId] 는 componentId에 해당하는 컴포넌트의 배열이며,
-        mComponentPools[componentId]의 index는 entityId를 가리킴.
+        따라서, mComponentPools[componentId] 는 componentId에 해당하는 컴포넌트의
+       배열이며, mComponentPools[componentId]의 index는 entityId를 가리킴.
 
         결과적으로,
         (entity의 갯수, component의 갯수)의 이차원 배열이 형성된다.
@@ -375,8 +379,8 @@ public:
     caution
     템플릿은 제네릭과 다르게 컴파일 시간에 인스턴스화 됨.
     따라서 템플릿의 구현을 별도의 .cpp 파일에 넣으면,
-    컴파일러가 다른 소스 파일에서 해당 템플릿을 인스턴스화할 때 필요한 정보를 찾을 수 없게 됨.
-    따라서 링크 오류가 발생함.
+    컴파일러가 다른 소스 파일에서 해당 템플릿을 인스턴스화할 때 필요한 정보를 찾을 수 없게
+   됨. 따라서 링크 오류가 발생함.
 */
 
 template <typename TComponent, typename... TArgs>

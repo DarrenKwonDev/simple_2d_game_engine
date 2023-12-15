@@ -13,6 +13,7 @@ AllowShortIfStatementsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
 AlignAfterOpenBracket: Align
 IndentCaseLabels: false
+ReflowComments: false
 ColumnLimit: 120
 
 # 함수 선언시 인자들을 한줄로 표현할지 여부

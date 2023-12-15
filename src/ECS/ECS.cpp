@@ -160,7 +160,8 @@ std::vector<Entity> Registry::GetEntitiesByGroup(const GroupName& group) const {
 void Registry::RemoveEntityFromGroup(Entity entity) {
     // 두 가지 맵에서 모두 드랍해야 한다.
     // mGroupPerEntityMap -> entity ID 가진 필드 드랍
-    // mEntityPerGroupMap -> entity가 가진 group에서 entity 드랍 (group을 모두 순회하지 않도록하자.)
+    // mEntityPerGroupMap -> entity가 가진 group에서 entity 드랍 (group을 모두 순회하지
+    // 않도록하자.)
 
     auto groupNameIter = mGroupPerEntityMap.find(entity.GetId());
     if (groupNameIter == mGroupPerEntityMap.end()) {

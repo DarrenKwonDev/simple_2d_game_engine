@@ -8,8 +8,8 @@
 #include "Logger.h"
 
 // Logger 클래스의 static 멤버 변수 초기화
-// static 멤버 변수를 초기화하지 않으면, 링커는 해당 변수에 대한 정의를 찾을 수 없어 "Undefined symbols" 오류를
-// 발생시킵니다.
+// static 멤버 변수를 초기화하지 않으면, 링커는 해당 변수에 대한 정의를 찾을 수 없어
+// "Undefined symbols" 오류를 발생시킵니다.
 std::vector<LogEntry> Logger::mMessages;
 
 Logger::Logger() {
