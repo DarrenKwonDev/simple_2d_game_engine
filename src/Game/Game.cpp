@@ -19,6 +19,7 @@
 #include "Components/HealthComponent.h"
 #include "Components/KeyboardControlComponent.h"
 #include "Components/ProjectileEmitterComponent.h"
+#include "Components/TextLabelComponent.h"
 #include "Events/KeyPressedEvent.h"
 #include "Game.h"
 #include "Macros.h"
@@ -30,6 +31,7 @@
 #include "Systems/ProjectileEmitSystem.h"
 #include "Systems/ProjectileLifecycleSystem.h"
 #include "Systems/RenderColliderSystem.h"
+#include "Systems/RenderTextSystem.h"
 
 int Game::mWindowWidth;
 int Game::mWindowHeight;
@@ -53,6 +55,11 @@ Game::~Game() {
 void Game::Initialize() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         Logger::Err("Error initializing SDL");
+        return;
+    }
+
+    if (TTF_Init() != 0) {
+        Logger::Err("Error initializing SDL TTF");
         return;
     }
 
@@ -147,6 +154,7 @@ void Game::LoadLevel(int level) {
     mRegistry->AddSystem<CameraMovementSystem>();
     mRegistry->AddSystem<ProjectileEmitSystem>();
     mRegistry->AddSystem<ProjectileLifecycleSystem>();
+    mRegistry->AddSystem<RenderTextSystem>();
 
     // add texture
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
@@ -154,6 +162,9 @@ void Game::LoadLevel(int level) {
     mAssetStore->AddTexture(mRenderer, "chopper-image", "./assets/images/chopper-spritesheet.png");
     mAssetStore->AddTexture(mRenderer, "radar-image", "./assets/images/radar.png");
     mAssetStore->AddTexture(mRenderer, "bullet-image", "./assets/images/bullet.png");
+
+    // add fonts
+    mAssetStore->AddFont("charriot-font", "./assets/fonts/charriot.ttf", 16);
 
     // tilemap
     mAssetStore->AddTexture(mRenderer, "tilemap-image", "./assets/tilemaps/jungle.png");
@@ -240,6 +251,11 @@ void Game::LoadLevel(int level) {
     truck.AddComponent<BoxColliderComponent>(32, 32, glm::vec2(0));
     truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0.0, 100.0), 1000, 2000, 10, false);
     truck.AddComponent<HealthComponent>(100);
+
+    // TODO: label component 구현
+    Entity label = mRegistry->CreateEntity();
+    SDL_Color green = {0, 255, 0};
+    label.AddComponent<TextLabelComponent>(glm::vec2(100, 100), "CHOPPER 1.0", "charriot-font", green, true);
 }
 
 // one time setup
@@ -293,6 +309,7 @@ void Game::Render() {
     SDL_RenderClear(mRenderer); // clears the entire rendering target
 
     mRegistry->GetSystem<RenderSystem>().Update(mRenderer, mAssetStore, mCamera);
+    mRegistry->GetSystem<RenderTextSystem>().Update(mRenderer, mAssetStore, mCamera);
 
     if (mIsDebug) {
         mRegistry->GetSystem<RenderColliderSystem>().Update(mRenderer, mCamera);

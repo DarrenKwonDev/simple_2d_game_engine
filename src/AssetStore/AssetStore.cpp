@@ -1,5 +1,3 @@
-
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -20,6 +18,11 @@ void AssetStore::ClearAssets() {
         SDL_DestroyTexture(texture);
     }
     mTextures.clear();
+
+    for (auto& [_, font] : mFonts) {
+        TTF_CloseFont(font);
+    }
+    mFonts.clear();
 }
 
 void AssetStore::AddTexture(SDL_Renderer* renderer, const std::string& assetId, const std::string& filePath) {
@@ -38,4 +41,12 @@ SDL_Texture* AssetStore::GetTexture(const std::string& assetId) {
     // cpp에선 map의 operator[]는 없는 요소면 생성되는 동작을 함.
     // 따라서 아래와 같이 조회할 필요가 있음.
     return mTextures.find(assetId)->second;
+}
+
+void AssetStore::AddFont(const std::string& assetId, const std::string& filePath, int fontSize) {
+    mFonts.emplace(assetId, TTF_OpenFont(filePath.c_str(), fontSize));
+}
+
+TTF_Font* AssetStore::GetFont(const std::string& assetId) {
+    return mFonts.find(assetId)->second;
 }

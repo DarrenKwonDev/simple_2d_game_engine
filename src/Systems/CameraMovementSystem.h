@@ -34,7 +34,7 @@ public:
             camera.y = camera.y < 0 ? 0 : camera.y;
             camera.y = camera.y > camera.h ? camera.h : camera.y;
 
-            Logger::Log("camera position: " + std::to_string(camera.x) + " " + std::to_string(camera.y));
+            // Logger::Log("camera position: " + std::to_string(camera.x) + " " + std::to_string(camera.y));
         }
     }
 };
