@@ -31,6 +31,7 @@
 #include "Systems/ProjectileEmitSystem.h"
 #include "Systems/ProjectileLifecycleSystem.h"
 #include "Systems/RenderColliderSystem.h"
+#include "Systems/RenderHealthbarSystem.h"
 #include "Systems/RenderTextSystem.h"
 
 int Game::mWindowWidth;
@@ -155,6 +156,7 @@ void Game::LoadLevel(int level) {
     mRegistry->AddSystem<ProjectileEmitSystem>();
     mRegistry->AddSystem<ProjectileLifecycleSystem>();
     mRegistry->AddSystem<RenderTextSystem>();
+    mRegistry->AddSystem<RenderHealthBarSystem>();
 
     // add texture
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
@@ -164,7 +166,8 @@ void Game::LoadLevel(int level) {
     mAssetStore->AddTexture(mRenderer, "bullet-image", "./assets/images/bullet.png");
 
     // add fonts
-    mAssetStore->AddFont("charriot-font", "./assets/fonts/charriot.ttf", 16);
+    mAssetStore->AddFont("charriot-font-16", "./assets/fonts/charriot.ttf", 16);
+    mAssetStore->AddFont("arial-font-16", "./assets/fonts/arial.ttf", 16);
 
     // tilemap
     mAssetStore->AddTexture(mRenderer, "tilemap-image", "./assets/tilemaps/jungle.png");
@@ -252,10 +255,9 @@ void Game::LoadLevel(int level) {
     truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0.0, 100.0), 1000, 2000, 10, false);
     truck.AddComponent<HealthComponent>(100);
 
-    // TODO: label component 구현
     Entity label = mRegistry->CreateEntity();
     SDL_Color green = {0, 255, 0};
-    label.AddComponent<TextLabelComponent>(glm::vec2(100, 100), "CHOPPER 1.0", "charriot-font", green, true);
+    label.AddComponent<TextLabelComponent>(glm::vec2(100, 100), "CHOPPER 1.0", "arial-font-16", green, true);
 }
 
 // one time setup
@@ -310,6 +312,7 @@ void Game::Render() {
 
     mRegistry->GetSystem<RenderSystem>().Update(mRenderer, mAssetStore, mCamera);
     mRegistry->GetSystem<RenderTextSystem>().Update(mRenderer, mAssetStore, mCamera);
+    mRegistry->GetSystem<RenderHealthBarSystem>().Update(mRenderer, mAssetStore, mCamera);
 
     if (mIsDebug) {
         mRegistry->GetSystem<RenderColliderSystem>().Update(mRenderer, mCamera);
