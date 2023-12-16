@@ -24,11 +24,12 @@
         -   [full screen, fake full screen](#full-screen-fake-full-screen)
         -   [rendererFlags and hardware acceleration](#rendererflags-and-hardware-acceleration)
         -   [surface vs texture](#surface-vs-texture)
-    -   [개인적인 coding convention이나 기타 개발 관습에 대해](#개인적인-coding-convention이나-기타-개발-관습에-대해)
     -   [etc](#etc)
+        -   [UI paradigm (retain vs immediate)](#ui-paradigm-retain-vs-immediate)
         -   [OTF(OpenType Font), TTF(TrueType Font)](#otfopentype-font-ttftruetype-font)
         -   [lldb 두 번 쓰세요](#lldb-두-번-쓰세요)
     -   [known issues](#known-issues)
+    -   [개인적인 coding convention이나 기타 개발 관습에 대해](#개인적인-coding-convention이나-기타-개발-관습에-대해)
     -   [resources](#resources)
 
 <!-- tocstop -->
@@ -327,17 +328,21 @@ SDL_Surface는 이미지 처리나 간단한 소프트웨어 렌더링에 적합
 
 SDL_Surface는 시스템 메모리(RAM)에 저장되고, SDL_Texture는 GPU의 비디오 메모리(VRAM)에 저장됩니다.
 
-## 개인적인 coding convention이나 기타 개발 관습에 대해
-
--   여기서는 struct와 class를 혼용하였다. 그러나 struct는 POD만을 담도록 하는 것이 좋다고 생각한다.
--   c lib는 smart pointer로 wrapping하지 않는다.
--   여기서는 대입을 통해 멤버 변수를 초기화한 부분이 있으나 가급적 initializer list를 사용하는 것이 좋다고 생각한다.
--   IDE로 vscode를 사용 중인데, c/c++ extension가 제공해주는 intellisense가 아주 느리다. [clangd](https://clangd.llvm.org/) 사용을 권장하며, 사용하는 빌드 시스템 툴에 따라 compile_commands.json을 생성하여 사용하자.
--   enum 보다 enum class가 strongly typed기도 하고, enum의 class를 명시하는 효과가 있어서 더 자주 사용하는 편이다. 특히, 타 언어에서 그런 표기법을 사용하는 경우가 많아서 익숙하다.
--   DO NOT USE EXCEPTION. just let engine crash.
--   타 언어일 때는 inlay hints가 지저분해보였는데 c/cpp에서는 이게 없으면 코드 읽기가 더 힘들어지는 듯. 활성화 추천.
-
 ## etc
+
+### UI paradigm (retain vs immediate)
+
+-   retain mode(RMGUI)  
+    web에서 vanilla js로 DOM을 구성하는 것과 비슷하다.
+    UI 요소를 객체로 보고, UI가 바인딩한 데이터의 변화에 따른 변화를 처리하도록 해당 객체를 구성해야 한다. 따라서 해당 UI가 state의 변화 로직과 변화에 따른 렌더링 로직을 모두 가지고 있어야 한다.
+
+    -   UI의 상태가 지속적으로 저장 및 관리되어야 하는 경우 사용
+    -   UI와 데이터를 바인딩(sync)하여 사용하는 대부분의 SPA 프레임워크의 방식
+
+-   immediate mode(IMGUI)  
+    게임 루프에 UI 렌더링을 태워서 UI를 새롭게 그려낸다. 그래서 UI가 데이터를 직접적으로 소유하지 않고 바인딩하는 것도 없다.
+
+[About the IMGUI paradigm](https://github.com/ocornut/imgui/wiki/About-the-IMGUI-paradigm)
 
 ### OTF(OpenType Font), TTF(TrueType Font)
 
@@ -368,6 +373,16 @@ OTF는 TTF보다 더 많은 기능을 제공하는 대신 더 큰 용량을 차�
 
         내장 모니터가 3456 x 2234임에도 화면 분할 기능을 사용하면 1728 x 2234로 나눠지게 된다.
         전체 화면 게임을 실행할 경우 어떻게 대처할 것인가?
+
+## 개인적인 coding convention이나 기타 개발 관습에 대해
+
+-   여기서는 struct와 class를 혼용하였다. 그러나 struct는 POD만을 담도록 하는 것이 좋다고 생각한다.
+-   c lib는 smart pointer로 wrapping하지 않는다.
+-   여기서는 대입을 통해 멤버 변수를 초기화한 부분이 있으나 가급적 initializer list를 사용하는 것이 좋다고 생각한다.
+-   IDE로 vscode를 사용 중인데, c/c++ extension가 제공해주는 intellisense가 아주 느리다. [clangd](https://clangd.llvm.org/) 사용을 권장하며, 사용하는 빌드 시스템 툴에 따라 compile_commands.json을 생성하여 사용하자.
+-   enum 보다 enum class가 strongly typed기도 하고, enum의 class를 명시하는 효과가 있어서 더 자주 사용하는 편이다. 특히, 타 언어에서 그런 표기법을 사용하는 경우가 많아서 익숙하다.
+-   DO NOT USE EXCEPTION. just let engine crash.
+-   타 언어일 때는 inlay hints가 지저분해보였는데 c/cpp에서는 이게 없으면 코드 읽기가 더 힘들어지는 듯. 활성화 추천.
 
 ## resources
 
