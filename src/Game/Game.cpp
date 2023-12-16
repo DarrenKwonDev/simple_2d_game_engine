@@ -5,6 +5,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_sdl.h"
+#include "imgui/imgui_sdl.h"
+
 #include "../Components/AnimationComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/SpriteComponent.h"
@@ -92,6 +96,10 @@ void Game::Initialize() {
     // FIXME: when engine crashed, window is not restored to normal state.
     // SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
 
+    // init imgui
+    ImGui::CreateContext();
+    ImGuiSDL::Initialize(mRenderer, mWindowWidth, mWindowHeight);
+
     // set camera
     Logger::Log("camera initialized");
     mCamera.x = 0;
@@ -119,6 +127,17 @@ void Game::ProcessInput() {
 
     // Poll for currently pending events
     while (SDL_PollEvent(&sdlEvent)) {
+
+        // pass event to imgui
+        ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
+        ImGuiIO& io = ImGui::GetIO();
+
+        int mouseX, mouseY;
+        const int buttons = SDL_GetMouseState(&mouseX, &mouseY);
+        io.MousePos = ImVec2(mouseX, mouseY);
+        io.MouseDown[0] = buttons & SDL_BUTTON(SDL_BUTTON_LEFT);
+        io.MouseDown[1] = buttons & SDL_BUTTON(SDL_BUTTON_RIGHT);
+
         switch (sdlEvent.type) {
         // user press 'x' window close btn.
         case SDL_QUIT:
@@ -316,6 +335,11 @@ void Game::Render() {
 
     if (mIsDebug) {
         mRegistry->GetSystem<RenderColliderSystem>().Update(mRenderer, mCamera);
+
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow();
+        ImGui::Render();
+        ImGuiSDL::Render(ImGui::GetDrawData());
     }
 
     // present. (as double buffered renderer, swap back/front buffer)
@@ -324,6 +348,9 @@ void Game::Render() {
 
 // clean up
 void Game::Destroy() {
+    ImGui::DestroyContext();
+    ImGuiSDL::Deinitialize();
+
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
     SDL_Quit();

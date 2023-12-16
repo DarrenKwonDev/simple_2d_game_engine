@@ -1,6 +1,6 @@
 
 EXECUTABLE_NAME = gameengine
-SRCS = $(wildcard src/*.cpp) $(wildcard src/**/*.cpp)
+SRCS = $(wildcard src/*.cpp) $(wildcard src/**/*.cpp) $(wildcard libs/**/*.cpp)
 
 CXX = clang++
 CXX_STANDARD = c++17
