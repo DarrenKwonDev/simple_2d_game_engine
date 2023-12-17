@@ -61,7 +61,7 @@ public:
                              &dstRect,
                              transform.mRotation,
                              NULL,
-                             SDL_FLIP_NONE);
+                             sprite.mFlip);
         };
     };
 };

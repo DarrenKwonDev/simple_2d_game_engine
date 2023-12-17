@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Macros.h"
+#include "SDL2/SDL_render.h"
 #include <SDL2/SDL.h>
 #include <string>
 
@@ -9,6 +10,7 @@ struct SpriteComponent {
     int mWidth;
     int mHeight;
     ZIndex mZIndex;
+    SDL_RendererFlip mFlip;
     bool mIsFixed;
     SDL_Rect mSrcRect;
 
@@ -23,6 +25,7 @@ struct SpriteComponent {
         this->mWidth = width;
         this->mHeight = height;
         this->mZIndex = zIndex;
+        this->mFlip = SDL_FLIP_NONE;
         this->mIsFixed = isFixed;
         this->mSrcRect = {srcRectX, srcRectY, width, height};
     }

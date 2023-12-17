@@ -185,6 +185,7 @@ void Game::LoadLevel(int level) {
     mAssetStore->AddTexture(mRenderer, "chopper-image", "./assets/images/chopper-spritesheet.png");
     mAssetStore->AddTexture(mRenderer, "radar-image", "./assets/images/radar.png");
     mAssetStore->AddTexture(mRenderer, "bullet-image", "./assets/images/bullet.png");
+    mAssetStore->AddTexture(mRenderer, "tree-image", "./assets/images/tree.png");
 
     // add fonts
     mAssetStore->AddFont("charriot-font-16", "./assets/fonts/charriot.ttf", 16);
@@ -276,6 +277,18 @@ void Game::LoadLevel(int level) {
     truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0.0, 100.0), 1000, 2000, 10, false);
     truck.AddComponent<HealthComponent>(100);
 
+    Entity treeA = mRegistry->CreateEntity();
+    treeA.Group("obstacles");
+    treeA.AddComponent<TransformComponent>(glm::vec2(300.0, 350.0), glm::vec2(1.0, 1.0), 0.0);
+    treeA.AddComponent<SpriteComponent>("tree-image", 16, 32, ZIndex::Enemy);
+    treeA.AddComponent<BoxColliderComponent>(16, 32, glm::vec2(0));
+
+    Entity treeB = mRegistry->CreateEntity();
+    treeB.Group("obstacles");
+    treeB.AddComponent<TransformComponent>(glm::vec2(50.0, 350.0), glm::vec2(1.0, 1.0), 0.0);
+    treeB.AddComponent<SpriteComponent>("tree-image", 16, 32, ZIndex::Enemy);
+    treeB.AddComponent<BoxColliderComponent>(16, 32, glm::vec2(0));
+
     Entity label = mRegistry->CreateEntity();
     SDL_Color green = {0, 255, 0};
     label.AddComponent<TextLabelComponent>(glm::vec2(100, 100), "CHOPPER 1.0", "arial-font-16", green, true);
@@ -307,6 +320,7 @@ void Game::Update() {
     mEventBus->Reset();
 
     // re subscribe
+    mRegistry->GetSystem<MovementSystem>().SubscribeToEvents(mEventBus);
     mRegistry->GetSystem<DamageSystem>().SubscribeToEvents(mEventBus);
     mRegistry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(mEventBus);
     mRegistry->GetSystem<ProjectileEmitSystem>().SubscribeToEvents(mEventBus);
