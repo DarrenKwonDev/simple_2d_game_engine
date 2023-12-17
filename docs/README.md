@@ -19,6 +19,7 @@
         -   [collision check](#collision-check)
             -   [circle collision detection](#circle-collision-detection)
             -   [AABB collision detection](#aabb-collision-detection)
+    -   [language interoperability(언어 간 상호 운용성)](#language-interoperability언어-간-상호-운용성)
     -   [SLD2](#sld2)
         -   [paths](#paths)
         -   [full screen, fake full screen](#full-screen-fake-full-screen)
@@ -258,6 +259,21 @@ AABB (Axis-Aligned Bounding Box) collision check는, 단순히 entity를 감싼 
 2. A의 최소 X 좌표(A.x)가 B의 최대 X 좌표(B.x + B.width)보다 작아야 함
 3. A의 최대 Y 좌표(A.y + A.height)가 B의 최소 Y 좌표(B.height)보다 커야 함
 4. A의 최소 Y 좌표(A.y)가 B의 최대 Y 좌표(B.y + B.height)보다 작아야 함
+
+## language interoperability(언어 간 상호 운용성)
+
+다른 언어간의 바인딩 작업은, 개발 전략적으로 중요하다.
+
+core engine은 성능을 위해 저수준 언어로 개발하고, 상위 추상화 계층에선 script 언어를 사용하는 패턴은, 게임 엔진 뿐만 아니라 tensorflow, pytorch와 같은 계산-intensive한 프레임워크에서도 많이 사용되는 패턴이다.
+
+이를 구현하는 방법을 생각해보자면 아래 정도가 있겠다.
+
+-   FFI(Foreign Function Interface)가 지원되면 사용하거나 (Deno 같은 경우에는 내장으로 FFI를 지원한다.)
+-   스크립트 언어를 embedding하거나,
+-   binary를 통으로 불러와서 아예 실행하던가,
+-   서로 다른 책임을 가진 두 언어로 만들어진 프로그램을 실행하여 프로세스 간에 통신하거나(이 방법은 언어 간 상호 운용이라는 측면에서는 좀 벗어난 측면이 있지만)
+
+해당 엔진에서는 sol을 통해 간단하게 cpp과 lua 간의 바인딩을 구현하였다.
 
 ## SLD2
 
