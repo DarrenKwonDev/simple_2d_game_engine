@@ -7,6 +7,8 @@
 
 class MovementSystem : public System {
 private:
+    int mMapMargin = 100;
+
 public:
     MovementSystem() {
         // mSysRequiredComponentSignature will be set
@@ -26,8 +28,9 @@ public:
 
             // screen에서 벗어나는 기준으로 삼으면 안되고, 맵 기준으로 삼아야 함.
             // 스크린 밖에도 맵이 있다.
-            bool isEntityOutOfMap = transform.mPosition.x < 0 || transform.mPosition.x > Game::mMapWidth ||
-                                    transform.mPosition.y < 0 || transform.mPosition.y > Game::mMapHeight;
+            bool isEntityOutOfMap =
+                transform.mPosition.x < -mMapMargin || transform.mPosition.x > Game::mMapWidth + mMapMargin ||
+                transform.mPosition.y < -mMapMargin || transform.mPosition.y > Game::mMapHeight + mMapMargin;
 
             if (isEntityOutOfMap && !entity.HasTag("player")) {
                 entity.Kill();
