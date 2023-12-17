@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "Systems/RenderGUISystem.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_sdl.h"
@@ -97,7 +98,7 @@ void Game::Initialize() {
     // SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
 
     // init imgui
-    ImGui::CreateContext();
+    ImGui::SetCurrentContext(ImGui::CreateContext());
     ImGuiSDL::Initialize(mRenderer, mWindowWidth, mWindowHeight);
 
     // set camera
@@ -176,6 +177,7 @@ void Game::LoadLevel(int level) {
     mRegistry->AddSystem<ProjectileLifecycleSystem>();
     mRegistry->AddSystem<RenderTextSystem>();
     mRegistry->AddSystem<RenderHealthBarSystem>();
+    mRegistry->AddSystem<RenderGUISystem>();
 
     // add texture
     mAssetStore->AddTexture(mRenderer, "tank-image", "./assets/images/tank-panther-right.png");
@@ -335,11 +337,7 @@ void Game::Render() {
 
     if (mIsDebug) {
         mRegistry->GetSystem<RenderColliderSystem>().Update(mRenderer, mCamera);
-
-        ImGui::NewFrame();
-        ImGui::ShowDemoWindow();
-        ImGui::Render();
-        ImGuiSDL::Render(ImGui::GetDrawData());
+        mRegistry->GetSystem<RenderGUISystem>().Update(mRegistry);
     }
 
     // present. (as double buffered renderer, swap back/front buffer)
@@ -348,8 +346,10 @@ void Game::Render() {
 
 // clean up
 void Game::Destroy() {
-    ImGui::DestroyContext();
+    // should be destroyed in reverse order of creation.
+    // ImGuiSDL 먼저 해제해야 함.
     ImGuiSDL::Deinitialize();
+    ImGui::DestroyContext();
 
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
