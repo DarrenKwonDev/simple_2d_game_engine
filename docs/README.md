@@ -37,6 +37,9 @@
 
 # simple_2d_game_engine
 
+<img src="./imgs/showcase.png" alt="Image 1" style="float: left; width: 48%; margin-right: 2%;" />
+<img src="./imgs/arch.png" alt="Image 2" style="float: right; width: 48%; margin-left: 2%;" />
+
 ## configure
 
 ### deps
