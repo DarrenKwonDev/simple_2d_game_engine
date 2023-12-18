@@ -264,13 +264,13 @@ AABB (Axis-Aligned Bounding Box) collision check는, 단순히 entity를 감싼 
 
 다른 언어간의 바인딩 작업은, 개발 전략적으로 중요하다.
 
-core engine은 성능을 위해 저수준 언어로 개발하고, 상위 추상화 계층에선 script 언어를 사용하는 패턴은, 게임 엔진 뿐만 아니라 tensorflow, pytorch와 같은 계산-intensive한 프레임워크에서도 많이 사용되는 패턴이다.
+core engine은 성능을 위해 저수준 언어로 개발하고, 상위 추상화 계층에선 script 언어를 사용하는 패턴은, 게임 엔진 뿐만 아니라 tensorflow, pytorch와 같은 cpu bound한 작업을 요구하는 소프트웨어에서 squeeze performance out of hardware를 위해 많이 사용되는 패턴이다.
 
 이를 구현하는 방법을 생각해보자면 아래 정도가 있겠다.
 
--   FFI(Foreign Function Interface)가 지원되면 사용하거나 (Deno 같은 경우에는 내장으로 FFI를 지원한다.)
--   스크립트 언어를 embedding하거나,
--   binary를 통으로 불러와서 아예 실행하던가,
+-   FFI(Foreign Function Interface)가 지원되면 사용하거나 (deno 같은 경우에는 내장으로 FFI를 지원한다.)
+-   저수준 언어에서 스크립트 언어를 embedding하거나,
+-   고수준 언어에서 컴파일된 binary를 통으로 불러와서 아예 실행하던가,
 -   서로 다른 책임을 가진 두 언어로 만들어진 프로그램을 실행하여 프로세스 간에 통신하거나(이 방법은 언어 간 상호 운용이라는 측면에서는 좀 벗어난 측면이 있지만)
 
 해당 엔진에서는 sol을 통해 간단하게 cpp과 lua 간의 바인딩을 구현하였다.
